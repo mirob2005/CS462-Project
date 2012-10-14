@@ -1,10 +1,5 @@
 /********************************************************************************
-** Form generated from reading ui file 'NewGenPOS.jui'
-**
-** Created: Fri Oct 12 17:25:18 2012
-**      by: Qt User Interface Compiler version 4.5.2
-**
-** WARNING! All changes made in this file will be lost when recompiling ui file!
+** NewGenPOS Interface
 ********************************************************************************/
 
 import com.trolltech.qt.core.*;
@@ -45,12 +40,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 
 
     public Ui_NewGenPOS() { super(); }
-    
-//    public void setValue(String msg) 
-//    {
-//        productInput.setPlainText(msg);
-//    }  
-     
+       
     
     public static void main(String args[])
     {
@@ -270,7 +260,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         retranslateUi(NewGenPOS);
 
 
-        
+        //These send signals when these buttons are clicked
         paidButton.clicked.connect(this, "on_paidButton_clicked()");
         addItemButton.clicked.connect(this, "on_addItemButton_clicked()");
         
