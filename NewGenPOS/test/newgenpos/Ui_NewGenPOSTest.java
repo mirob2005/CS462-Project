@@ -1,164 +1,62 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * CS 462 - Group NewGenPOS 2 JUnit Test Cases - 1 should pass, 1 should fail
  */
 package newgenpos;
 
-import com.trolltech.qt.gui.QMainWindow;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-/**
- *
- * @author Mike
- */
 public class Ui_NewGenPOSTest {
+    
+    public List<Double> priceList = new ArrayList<Double>();
     
     public Ui_NewGenPOSTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
+    public void addItem(int quantity){
+        for(int i =0; i<quantity; i++){
+            priceList.add(5.40);        
+        }
     }
     
-    @AfterClass
-    public static void tearDownClass() {
+    //Copy of displayPrice() method from Ui_NewGenPOS with 2 minor changes 
+    //needed for this context
+    public double displayPrice() {
+        double totalPrice = 0;
+        
+        for(int i =0; i < priceList.size(); i++) {
+             totalPrice += priceList.get(i);
+        }
+        
+        //Calculate Tax
+        totalPrice = totalPrice*1.08;
+        int totalPriceScaled = (int) (totalPrice*100);
+        totalPrice = totalPriceScaled/100.0;
+
+        //totalDisplay.display(totalPrice); //Not need in this context
+        return totalPrice; //Added to return price in a useful way
     }
     
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
-     * Test of main method, of class Ui_NewGenPOS.
+     * Test of displayPrice()
      */
     @Test
-    public void testMain() {
-        System.out.println("main");
-        String[] args = null;
-        Ui_NewGenPOS.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testDisplayPriceShouldPass() {
+        System.out.println("Adding 2 items at $5.40 each - Test should pass");
+        
+        addItem(2);
+        
+        double total = displayPrice();
+        assert(total==11.66); //Total should be 11.66
     }
-
-    /**
-     * Test of setupUi method, of class Ui_NewGenPOS.
-     */
     @Test
-    public void testSetupUi() {
-        System.out.println("setupUi");
-        QMainWindow NewGenPOS = null;
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.setupUi(NewGenPOS);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of retranslateUi method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testRetranslateUi() {
-        System.out.println("retranslateUi");
-        QMainWindow NewGenPOS = null;
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.retranslateUi(NewGenPOS);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of on_paidButton_clicked method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testOn_paidButton_clicked() {
-        System.out.println("on_paidButton_clicked");
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.on_paidButton_clicked();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of clearCart method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testClearCart() {
-        System.out.println("clearCart");
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.clearCart();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of on_addItemButton_clicked method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testOn_addItemButton_clicked() {
-        System.out.println("on_addItemButton_clicked");
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.on_addItemButton_clicked();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of clearProductInput method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testClearProductInput() {
-        System.out.println("clearProductInput");
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.clearProductInput();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of addItemToTable method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testAddItemToTable() {
-        System.out.println("addItemToTable");
-        String productID = "";
-        int quantity = 0;
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.addItemToTable(productID, quantity);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of displayPrice method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testDisplayPrice() {
-        System.out.println("displayPrice");
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.displayPrice();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of displayDescription method, of class Ui_NewGenPOS.
-     */
-    @Test
-    public void testDisplayDescription() {
-        System.out.println("displayDescription");
-        String productID = "";
-        Ui_NewGenPOS instance = new Ui_NewGenPOS();
-        instance.displayDescription(productID);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testDisplayPriceShouldFail() {
+        System.out.println("Adding 3 items at $5.40 each - Test should fail");
+       
+        addItem(3);
+        
+        double total = displayPrice();
+        assert(total==11.75); //Total should be 17.49
     }
 }
