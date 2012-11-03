@@ -322,17 +322,23 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         priceList.clear();
     }
     public void on_addItemButton_clicked() {
-        String productID = productInput.text();
-        int quantity = Integer.parseInt(qtyInput.text());
-        
-        addItemToTable(productID, quantity);
+ 
+        try{
+            int productID = Integer.parseInt(productInput.text());
+            int quantity = Integer.parseInt(qtyInput.text());
+            addItemToTable(productID, quantity);
+        }
+        catch(NumberFormatException e){
+            itemDescrTextEdit.setPlainText("Product ID and Quantity values must contain ONLY numbers! Try Again!");     
+        }
+              
         clearProductInput();
     }
     public void clearProductInput() {
         productInput.setText("");
         qtyInput.setText("1");
     }
-    public void addItemToTable(String productID, int quantity) {
+    public void addItemToTable(int productID, int quantity) {
         
         for(int i=0; i < quantity; i++) {
             priceList.add(5.40);
@@ -343,9 +349,10 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         priceString = (twoDecimals.format(priceList.get(0)));
         
         String quantityString = Integer.toString(quantity);
+        String productIDString = Integer.toString(productID);
         
         List newRow = new ArrayList();
-        newRow.add(new QStandardItem(productID));
+        newRow.add(new QStandardItem(productIDString));
         newRow.add(new QStandardItem("Aribtrary Product Name"));
         newRow.add(new QStandardItem("$"+priceString));
         newRow.add(new QStandardItem(quantityString));
@@ -370,7 +377,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         totalDisplay.display(totalPrice);      
     }
-    public void displayDescription(String productID) {
+    public void displayDescription(int productID) {
         itemDescrTextEdit.setPlainText("Arbitrary Product Description for Product #" + productID);    
     }
 }
