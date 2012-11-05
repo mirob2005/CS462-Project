@@ -18,6 +18,8 @@ import java.net.*;
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
+    public QDialog dialog;
+    public Ui_Dialog UIdialog;
     public QWidget centralwidget;
     public QPushButton addItemButton;
     public QLineEdit productInput;
@@ -41,7 +43,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     public QPushButton pushButton_2;
     public QPushButton pushButton_3;
     public QLabel label;
-    public List<Double> priceList = new ArrayList<Double>();
+    public List<Double> priceList = new ArrayList<>();
     public QStandardItemModel model = new QStandardItemModel(0,4);
     public static Connection con = null;
 
@@ -55,26 +57,9 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
 
-//            Statement st = con.createStatement();
-//            ResultSet rs = st.executeQuery("SELECT * FROM Inventory");
-//              ResultSet rs = st.executeQuery("select * from Inventory where itemID = 100002");
-            
-
-//            while(rs.next()) {
-//                System.out.println(rs.getString("itemID"));
-//                System.out.println(rs.getString("description"));
-//                System.out.println(rs.getString("price"));
-//            }
-            
-
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Database Not Connected, Product IDs will not be found!");
         } 
-//        finally {
-//            if(con != null) {
-//                con.close();
-//            }
-//        }    
         
         QApplication.initialize(args);
 
@@ -82,7 +67,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         Ui_NewGenPOS mainUIWindow = new Ui_NewGenPOS();
         mainUIWindow.setupUi(mainWindow);
         mainWindow.setWindowTitle("NewGenPOS");
-        mainWindow.show();
+        mainWindow.show(); 
 
         QApplication.exec();
     }
@@ -339,10 +324,34 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     } // retranslateUi
     
     public void on_paidButton_clicked() {
+        showReceipt();
         itemDescrTextEdit.setPlainText("Thank You for Shopping!"); 
         totalDisplay.display(0);
         clearProductInput();
         clearCart();
+    }
+    public void showReceipt(){
+        dialog = new QDialog();
+        UIdialog = new Ui_Dialog();
+        UIdialog.setupUi(dialog);
+        dialog.setWindowTitle("Receipt");
+        dialog.show();
+                
+        UIdialog.receiptTextEdit.setPlainText("NewGenPOS Sale\nDate\tTime\n---------------------------\n");        
+        String receipt = "";
+        for(int i=0; i< model.rowCount(); i++){
+            for(int j=0; j<model.columnCount(); j++){
+                Object index = model.data(i,j);
+                receipt += index.toString();
+                receipt += "\t";
+            }
+             UIdialog.receiptTextEdit.append(receipt);
+             receipt = "";
+        }          
+        UIdialog.receiptTextEdit.append("\nSubtotal\t...");  
+        UIdialog.receiptTextEdit.append("Tax\t...");  
+        UIdialog.receiptTextEdit.append("Total\t...");  
+        UIdialog.receiptTextEdit.append("\nPayment Method\t...");  
     }
     public void clearCart() {
         model.clear();
