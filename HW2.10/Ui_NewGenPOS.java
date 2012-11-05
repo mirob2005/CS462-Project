@@ -10,11 +10,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
-import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.net.*;
-
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
@@ -43,51 +38,23 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     public QLabel label;
     public List<Double> priceList = new ArrayList<Double>();
     public QStandardItemModel model = new QStandardItemModel(0,4);
-    public static Connection con = null;
 
 
     public Ui_NewGenPOS() { super(); }
        
     
-    public static void main(String args[]) throws SQLException
+    public static void main(String args[])
     {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
-
-//            Statement st = con.createStatement();
-//            ResultSet rs = st.executeQuery("SELECT * FROM Inventory");
-//              ResultSet rs = st.executeQuery("select * from Inventory where itemID = 100002");
-            
-
-//            while(rs.next()) {
-//                System.out.println(rs.getString("itemID"));
-//                System.out.println(rs.getString("description"));
-//                System.out.println(rs.getString("price"));
-//            }
-            
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-//        finally {
-//            if(con != null) {
-//                con.close();
-//            }
-//        }    
-        
         QApplication.initialize(args);
 
         QMainWindow mainWindow = new QMainWindow();
         Ui_NewGenPOS mainUIWindow = new Ui_NewGenPOS();
         mainUIWindow.setupUi(mainWindow);
-        mainWindow.setWindowTitle("NewGenPOS");
         mainWindow.show();
 
         QApplication.exec();
     }
 
-    @Override
     public void setupUi(QMainWindow NewGenPOS)
     {
         NewGenPOS.setObjectName("NewGenPOS");
@@ -141,15 +108,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         QFont font14 = new QFont();
         font14.setFamily("Arial");
         font14.setPointSize(10);
-        
-        if(con != null){
-             itemDescrTextEdit.setPlainText("Inventory Loaded Successfully!");
-        }
-        else{
-            itemDescrTextEdit.setPlainText("ERROR: Inventory NOT Loaded Successfully!");
-        }
-            
-        itemDescrTextEdit.append("Add Item to Cart to See Product Description!");
+
+        itemDescrTextEdit.setPlainText("Add Item to Cart to See Product Description!");
     
         itemDescrScrollArea.setWidget(scrollAreaWidgetContents);
         itemDescrTextEdit.setFont(font14);
@@ -360,68 +320,46 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         priceList.clear();
     }
-    public void on_addItemButton_clicked() throws SQLException{
+    public void on_addItemButton_clicked() {
  
         try{
             int productID = Integer.parseInt(productInput.text());
             int quantity = Integer.parseInt(qtyInput.text());
-            
-            Statement st = con.createStatement();
-            
-            ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ productID);
-            
-            if(rs.first() == false)
-            {
-                itemDescrTextEdit.setPlainText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
-            }
-            else
-            {   
-                String description = rs.getString("description");
-                double price = Double.parseDouble(rs.getString("price"));
-                
-                addItemToTable(productID, quantity, description, price);
-            }
+            addItemToTable(productID, quantity);
         }
         catch(NumberFormatException e){
             itemDescrTextEdit.setPlainText("Product ID and Quantity values must contain ONLY numbers! Try Again!");     
         }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-            
+              
         clearProductInput();
     }
     public void clearProductInput() {
         productInput.setText("");
         qtyInput.setText("1");
     }
-    public void addItemToTable(int productID, int quantity, String description, double price) {
+    public void addItemToTable(int productID, int quantity) {
         
         for(int i=0; i < quantity; i++) {
-            priceList.add(price);
+            priceList.add(5.40);
         }
         
-        String priceString = "$";
+        String priceString = "";
         DecimalFormat twoDecimals = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
-        priceString += (twoDecimals.format(priceList.get((priceList.size()-1))));
+        priceString = (twoDecimals.format(priceList.get(0)));
         
         String quantityString = Integer.toString(quantity);
         String productIDString = Integer.toString(productID);
         
         List newRow = new ArrayList();
         newRow.add(new QStandardItem(productIDString));
-        newRow.add(new QStandardItem(description));
-        newRow.add(new QStandardItem(priceString));
+        newRow.add(new QStandardItem("Aribtrary Product Name"));
+        newRow.add(new QStandardItem("$"+priceString));
         newRow.add(new QStandardItem(quantityString));
         model.appendRow(newRow);
         
         displayPrice();
-        displayDescription(productID, quantity, description, priceString);
+        displayDescription(productID);
               
-    }
-    double RoundTo2Decimals(double val) {
-        DecimalFormat df2 = new DecimalFormat("###.##");
-        return Double.valueOf(df2.format(val));
     }
     public void displayPrice() {
         double totalPrice = 0;
@@ -432,20 +370,14 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         //Calculate Tax
         totalPrice = totalPrice*1.08;
-        totalPrice = RoundTo2Decimals(totalPrice);
+        int totalPriceScaled = (int) (totalPrice*100);
+        totalPrice = totalPriceScaled/100.0;
 
         
         totalDisplay.display(totalPrice);      
     }
-    public void displayDescription(int productID, int qty, String description, String priceString) {
-        if(qty==1)
-        {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each");    
-        }
-        else
-        {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each");    
-        }
+    public void displayDescription(int productID) {
+        itemDescrTextEdit.setPlainText("Arbitrary Product Description for Product #" + productID);    
     }
 }
 
