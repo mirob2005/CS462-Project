@@ -6,22 +6,18 @@ import com.trolltech.qt.gui.*;
 
 public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
 {
-//    public QPushButton receiptOK;
-    public QScrollArea receiptScrollArea;
-    public QWidget scrollAreaWidgetContents;
-    public QTextEdit receiptTextEdit;
-    public QLabel label;
-    public Ui_NewGenPOS mainWindow;
+    private QScrollArea receiptScrollArea;
+    private QWidget scrollAreaWidgetContents;
+    private QTextEdit receiptTextEdit;
+    private QLabel label;
 
     public Ui_Dialog() { super(); }
 
+    @Override
     public void setupUi(QDialog Dialog)
     {
         Dialog.setObjectName("Dialog");
         Dialog.resize(new QSize(640, 480).expandedTo(Dialog.minimumSizeHint()));
-//        receiptOK = new QPushButton(Dialog);
-//        receiptOK.setObjectName("receiptOK");
-//        receiptOK.setGeometry(new QRect(540, 440, 75, 25));
         receiptScrollArea = new QScrollArea(Dialog);
         receiptScrollArea.setObjectName("receiptScrollArea");
         receiptScrollArea.setGeometry(new QRect(20, 60, 600, 400));
@@ -52,12 +48,18 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         Dialog.connectSlotsByName();
     } // setupUi
 
-    void retranslateUi(QDialog Dialog)
+    private void retranslateUi(QDialog Dialog)
     {
         Dialog.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Dialog", null));
-//        receiptOK.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "OK", null));
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Receipt", null));
     } // retranslateUi
+    
+    public void setText(String text){
+        receiptTextEdit.setText(text);
+    }
+    public void appendText(String text){
+        receiptTextEdit.append(text);
+    }
     
 }
 
