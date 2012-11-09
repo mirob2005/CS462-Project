@@ -21,6 +21,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QDialog dialog;
     private Ui_Dialog UIdialog;
     private Connection con = ProductCatalog.con;
+    private static Register register;
     
     private QWidget centralwidget;
     private QPushButton addItemButton;
@@ -51,6 +52,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 
     public Ui_NewGenPOS() { 
         super();
+        register = Main.getRegister();
+        register.makeNewSale();
     }
        
     
@@ -75,10 +78,14 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font.setWeight(75);
         addItemButton.setFont(font);
         
-        
+        QFont font3 = new QFont();
+        font3.setFamily("Arial");
+        font3.setPointSize(12);
         productInput = new QLineEdit(centralwidget);
         productInput.setObjectName("productInput");
-        productInput.setGeometry(new QRect(20, 490, 450, 30));
+        productInput.setGeometry(new QRect(20, 490, 80, 30));
+        productInput.setFont(font3);
+        productInput.setMaxLength(6);
         
         productInputLabel = new QLabel(centralwidget);
         productInputLabel.setObjectName("productInputLabel");
@@ -112,13 +119,13 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font14.setPointSize(10);
         
         if(con != null){
-             itemDescrTextEdit.setPlainText("Inventory Loaded Successfully!");
+             setText("Inventory Loaded Successfully!");
         }
         else{
-            itemDescrTextEdit.setPlainText("ERROR: Inventory NOT Loaded Successfully!");
+            setText("ERROR: Inventory NOT Loaded Successfully!");
         }
             
-        itemDescrTextEdit.append("Add Item to Cart to See Product Description!");
+        appendText("Add Item to Cart to See Product Description!");
     
         itemDescrScrollArea.setWidget(scrollAreaWidgetContents);
         itemDescrTextEdit.setFont(font14);
@@ -154,9 +161,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         qtyInput = new QLineEdit(centralwidget);
         qtyInput.setObjectName("qtyInput");
         qtyInput.setGeometry(new QRect(500, 490, 50, 30));
-        QFont font3 = new QFont();
-        font3.setFamily("Arial");
-        font3.setPointSize(12);
+
         qtyInput.setFont(font3);
         qtyInput.setMaxLength(2);
         
@@ -280,7 +285,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         NewGenPOS.connectSlotsByName();
     } // setupUi
 
-    void retranslateUi(QMainWindow NewGenPOS)
+    private void retranslateUi(QMainWindow NewGenPOS)
     {
         NewGenPOS.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "MainWindow", null));
         addItemButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Add Item", null));
@@ -310,10 +315,12 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     
     public void on_paidButton_clicked() {
         showReceipt();
-        itemDescrTextEdit.setPlainText("Thank You for Shopping!"); 
+        register.endSale();
+        setText("Thank You for Shopping!"); 
         totalDisplay.display(0);
         clearProductInput();
         clearCart();
+        register.makeNewSale();
     }
     public void showReceipt(){
         dialog = new QDialog();
@@ -354,56 +361,82 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         priceList.clear();
     }
+    public int getProductInput(){
+        int productID = Integer.parseInt(productInput.text());
+        return productID;
+    }
+    public int getProductQty(){
+        int quantity = Integer.parseInt(qtyInput.text());
+        return quantity;
+    }
+    public void setText(String text){
+        itemDescrTextEdit.setPlainText(text);
+    }
+    public void appendText(String text){
+        itemDescrTextEdit.append(text);
+    }
     public void on_addItemButton_clicked() throws SQLException{
         if(con != null)
         {
             try{
-                int productID = Integer.parseInt(productInput.text());
-                int quantity = Integer.parseInt(qtyInput.text());
-
-                Statement st = con.createStatement();
-
-                ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ productID);
-
-                if(rs.first() == false)
+                int productID = getProductInput();
+                ItemID itemID = new ItemID(productID);
+                if(itemID.valid())
                 {
-                    itemDescrTextEdit.setPlainText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
-                }
-                else
-                {   
-                    String description = rs.getString("description");
-                    double price = Double.parseDouble(rs.getString("price"));
-                    int currentStock = rs.getInt("stock");
-                    
-                    int updatedStock = currentStock - quantity;                    
-                    if(updatedStock <0){
-                        if(quantity == 1)
-                        {
-                            itemDescrTextEdit.setPlainText("No "+description+"'s are left. Please chose another item.");
-                        }
-                        else
-                        {
-                            itemDescrTextEdit.setPlainText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
-                        }
-                        updatedStock = currentStock;
-                    }
-                    else{
-                        //Update table with currentStock - quantity with check that stock >=0 afterwards
-                        st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);                    
 
-                        addItemToTable(productID, quantity, description, price, updatedStock);            
+                    int quantity = getProductQty();
+
+                    Statement st = con.createStatement();
+
+                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.itemID());
+
+                    if(rs.first() == false)
+                    {
+                        setText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
                     }
+                    else
+                    {   
+                     
+                        String description = rs.getString("description");
+                        double price = Double.parseDouble(rs.getString("price"));
+                        int currentStock = rs.getInt("stock");
+
+                        int updatedStock = currentStock - quantity;                    
+                        if(updatedStock <0){
+                            if(quantity == 1)
+                            {
+                                setText("No "+description+"'s are left. Please chose another item.");
+                            }
+                            else
+                            {
+                                setText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
+                            }
+                            updatedStock = currentStock;
+                        }
+                        else{
+                            //Update table with currentStock - quantity with check that stock >=0 afterwards
+                            st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);  
+                            
+                            //START HERE
+//                    register.enterItem(itemID, quantity);   
+
+                            addItemToTable(productID, quantity, description, price, updatedStock);            
+                        }
+                    }
+                }
+                else{
+                    setText("Product ID is invalid, must be 6 numbers ranging between 100000 and 999999");
                 }
             }
             catch(NumberFormatException e){
-                itemDescrTextEdit.setPlainText("Product ID and Quantity values must contain ONLY numbers! Try Again!");
+                setText("Product ID and Quantity values must contain ONLY numbers! Try Again!");
             }
             catch(Exception e) {
                 e.printStackTrace();
             }
         }
         else{
-            itemDescrTextEdit.setPlainText("Inventory is NOT loaded, no products can be found!");
+            setText("Inventory is NOT loaded, no products can be found!");
         }
             
         clearProductInput();
@@ -436,6 +469,20 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         displayDescription(productID, quantity, description, priceString, updatedStock);
               
     }
+    public static void addItemToTable(SalesLineItem cart){
+//        String quantityString = Integer.toString(cart.getQty());
+//        String productIDString = Integer.toString(cart.getDescription().getItemID().itemID());
+//        
+//        List newRow = new ArrayList();
+//        newRow.add(new QStandardItem(productIDString));
+//        newRow.add(new QStandardItem(cart.getDescription().getDescription()));
+//        newRow.add(new QStandardItem(cart.getPrice().getFormatted()));
+//        newRow.add(new QStandardItem(quantityString));
+//        model.appendRow(newRow);
+//        
+//        displayPrice();
+//        displayDescription(productID, quantity, description, priceString, updatedStock);
+    }
     double RoundTo2Decimals(double val) {
         DecimalFormat df2 = new DecimalFormat("###.##");
         return Double.valueOf(df2.format(val));
@@ -457,11 +504,11 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     public void displayDescription(int productID, int qty, String description, String priceString, int updatedStock) {
         if(qty==1)
         {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
+            setText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
         }
         else
         {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
+            setText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
         }
     }
 }

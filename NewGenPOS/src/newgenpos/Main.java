@@ -10,13 +10,16 @@ public class Main {
     private static int storeID = 1;
     private static String storeAddress = "CSUF";
     private static String storeName = "NewGen";
+    private static Store myStore;
+    private static Register register;
     
     
     public static void main(String args[]) throws SQLException{       
         QApplication.initialize(args);
   
         try{
-            Store myStore = new Store(storeID, storeAddress, storeName);
+            myStore = new Store(storeID, storeAddress, storeName);
+            register = myStore.getRegister();
         }
         catch(Exception e){
             System.out.println("Database Not Connected, Product IDs will not be found!");
@@ -29,5 +32,8 @@ public class Main {
         mainWindow.show(); 
 
         QApplication.exec();
+    }
+    public static Register getRegister(){
+        return register;
     }
 }

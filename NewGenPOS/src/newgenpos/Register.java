@@ -1,5 +1,7 @@
 package newgenpos;
 
+import java.sql.SQLException;
+
 class Register {
     private ProductCatalog catalog;
     private Sale currentSale;
@@ -11,8 +13,8 @@ class Register {
     public void endSale(){
         currentSale.becomeComplete();
     }
-    public void enterItem(ItemID ItemID, int qty){
-        description = catalog.getProductDescription(ItemID);
+    public void enterItem(ItemID ItemID, int qty)throws SQLException{
+        description = catalog.getProductDescription(ItemID, qty);
         currentSale.makeLineItem(description, qty);
     }
     public void makeNewSale(){

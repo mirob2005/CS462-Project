@@ -26,6 +26,7 @@ class Sale {
     
     public void makeLineItem(ProductDescription desc, int qty){
         cart = new SalesLineItem(desc, qty);
+        Ui_NewGenPOS.addItemToTable(cart); 
     }
     
     public void makePayment(Money cashTendered){
