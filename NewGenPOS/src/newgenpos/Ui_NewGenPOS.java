@@ -20,7 +20,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
     private QDialog dialog;
     private Ui_Dialog UIdialog;
-    private Connection con = Main.con;
+    private Connection con = ProductCatalog.con;
     
     private QWidget centralwidget;
     private QPushButton addItemButton;
