@@ -18,59 +18,43 @@ import java.net.*;
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
-    public QDialog dialog;
-    public Ui_Dialog UIdialog;
-    public QWidget centralwidget;
-    public QPushButton addItemButton;
-    public QLineEdit productInput;
-    public QLabel productInputLabel;
-    public QFrame line;
-    public QScrollArea itemDescrScrollArea;
-    public QWidget scrollAreaWidgetContents;
-    public QTextEdit itemDescrTextEdit;
-    public QScrollArea cartScrollArea;
-    public QWidget scrollAreaWidgetContents_2;
-    public QTableView cartTableView;
-    public QLabel qtyInputLabel;
-    public QLineEdit qtyInput;
-    public QToolButton paidButton;
-    public QLabel itemDescrLabel;
-    public QLabel cartLabel;
-    public QLabel titleLabel;
-    public QLCDNumber totalDisplay;
-    public QLabel totalLabel;
-    public QPushButton pushButton;
-    public QPushButton pushButton_2;
-    public QPushButton pushButton_3;
-    public QLabel label;
-    public List<Double> priceList = new ArrayList<>();
-    public QStandardItemModel model = new QStandardItemModel(0,4);
-    public static Connection con = null;
+    private QDialog dialog;
+    private Ui_Dialog UIdialog;
+    private Connection con = Main.con;
+    
+    private QWidget centralwidget;
+    private QPushButton addItemButton;
+    private QLineEdit productInput;
+    private QLabel productInputLabel;
+    private QFrame line;
+    private QScrollArea itemDescrScrollArea;
+    private QWidget scrollAreaWidgetContents;
+    private QTextEdit itemDescrTextEdit;
+    private QScrollArea cartScrollArea;
+    private QWidget scrollAreaWidgetContents_2;
+    private QTableView cartTableView;
+    private QLabel qtyInputLabel;
+    private QLineEdit qtyInput;
+    private QToolButton paidButton;
+    private QLabel itemDescrLabel;
+    private QLabel cartLabel;
+    private QLabel titleLabel;
+    private QLCDNumber totalDisplay;
+    private QLabel totalLabel;
+    private QPushButton pushButton;
+    private QPushButton pushButton_2;
+    private QPushButton pushButton_3;
+    private QLabel label;
+    private List<Double> priceList = new ArrayList<>();
+    private QStandardItemModel model = new QStandardItemModel(0,4);
 
 
-    public Ui_NewGenPOS() { super(); }
+    public Ui_NewGenPOS() { 
+        super();
+    }
        
     
-    public static void main(String args[]) throws SQLException
-    {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
 
-        } catch (Exception e) {
-            System.out.println("Database Not Connected, Product IDs will not be found!");
-        } 
-        
-        QApplication.initialize(args);
-
-        QMainWindow mainWindow = new QMainWindow();
-        Ui_NewGenPOS mainUIWindow = new Ui_NewGenPOS();
-        mainUIWindow.setupUi(mainWindow);
-        mainWindow.setWindowTitle("NewGenPOS");
-        mainWindow.show(); 
-
-        QApplication.exec();
-    }
 
     @Override
     public void setupUi(QMainWindow NewGenPOS)
@@ -174,6 +158,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font3.setFamily("Arial");
         font3.setPointSize(12);
         qtyInput.setFont(font3);
+        qtyInput.setMaxLength(2);
         
         
         
@@ -337,7 +322,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         dialog.setWindowTitle("Receipt");
         dialog.show();
                 
-        UIdialog.receiptTextEdit.setPlainText("NewGenPOS Sale\nDate\tTime\n---------------------------\n");        
+        UIdialog.setText("NewGenPOS Sale\nDate\tTime\n---------------------------\n");        
         String receipt = "";
         for(int i=0; i< model.rowCount(); i++){
             for(int j=0; j<model.columnCount(); j++){
@@ -345,13 +330,13 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
                 receipt += index.toString();
                 receipt += "\t";
             }
-             UIdialog.receiptTextEdit.append(receipt);
+             UIdialog.appendText(receipt);
              receipt = "";
         }          
-        UIdialog.receiptTextEdit.append("\nSubtotal\t...");  
-        UIdialog.receiptTextEdit.append("Tax\t...");  
-        UIdialog.receiptTextEdit.append("Total\t...");  
-        UIdialog.receiptTextEdit.append("\nPayment Method\t...");  
+        UIdialog.appendText("\nSubtotal\t...");  
+        UIdialog.appendText("Tax\t...");  
+        UIdialog.appendText("Total\t...");  
+        UIdialog.appendText("\nPayment Method\t...");  
     }
     public void clearCart() {
         model.clear();
@@ -370,32 +355,55 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         priceList.clear();
     }
     public void on_addItemButton_clicked() throws SQLException{
- 
-        try{
-            int productID = Integer.parseInt(productInput.text());
-            int quantity = Integer.parseInt(qtyInput.text());
-            
-            Statement st = con.createStatement();
-            
-            ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ productID);
-            
-            if(rs.first() == false)
-            {
-                itemDescrTextEdit.setPlainText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
+        if(con != null)
+        {
+            try{
+                int productID = Integer.parseInt(productInput.text());
+                int quantity = Integer.parseInt(qtyInput.text());
+
+                Statement st = con.createStatement();
+
+                ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ productID);
+
+                if(rs.first() == false)
+                {
+                    itemDescrTextEdit.setPlainText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
+                }
+                else
+                {   
+                    String description = rs.getString("description");
+                    double price = Double.parseDouble(rs.getString("price"));
+                    int currentStock = rs.getInt("stock");
+                    
+                    int updatedStock = currentStock - quantity;                    
+                    if(updatedStock <0){
+                        if(quantity == 1)
+                        {
+                            itemDescrTextEdit.setPlainText("No "+description+"'s are left. Please chose another item.");
+                        }
+                        else
+                        {
+                            itemDescrTextEdit.setPlainText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
+                        }
+                        updatedStock = currentStock;
+                    }
+                    else{
+                        //Update table with currentStock - quantity with check that stock >=0 afterwards
+                        st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);                    
+
+                        addItemToTable(productID, quantity, description, price, updatedStock);            
+                    }
+                }
             }
-            else
-            {   
-                String description = rs.getString("description");
-                double price = Double.parseDouble(rs.getString("price"));
-                
-                addItemToTable(productID, quantity, description, price);
+            catch(NumberFormatException e){
+                itemDescrTextEdit.setPlainText("Product ID and Quantity values must contain ONLY numbers! Try Again!");
+            }
+            catch(Exception e) {
+                e.printStackTrace();
             }
         }
-        catch(NumberFormatException e){
-            itemDescrTextEdit.setPlainText("Product ID and Quantity values must contain ONLY numbers! Try Again!");     
-        }
-        catch(Exception e) {
-            e.printStackTrace();
+        else{
+            itemDescrTextEdit.setPlainText("Inventory is NOT loaded, no products can be found!");
         }
             
         clearProductInput();
@@ -404,7 +412,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         productInput.setText("");
         qtyInput.setText("1");
     }
-    public void addItemToTable(int productID, int quantity, String description, double price) {
+    public void addItemToTable(int productID, int quantity, String description, double price, int updatedStock) {
         
         for(int i=0; i < quantity; i++) {
             priceList.add(price);
@@ -425,7 +433,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         model.appendRow(newRow);
         
         displayPrice();
-        displayDescription(productID, quantity, description, priceString);
+        displayDescription(productID, quantity, description, priceString, updatedStock);
               
     }
     double RoundTo2Decimals(double val) {
@@ -446,14 +454,14 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         totalDisplay.display(totalPrice);      
     }
-    public void displayDescription(int productID, int qty, String description, String priceString) {
+    public void displayDescription(int productID, int qty, String description, String priceString, int updatedStock) {
         if(qty==1)
         {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each");    
+            itemDescrTextEdit.setPlainText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
         }
         else
         {
-            itemDescrTextEdit.setPlainText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each");    
+            itemDescrTextEdit.setPlainText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
         }
     }
 }
