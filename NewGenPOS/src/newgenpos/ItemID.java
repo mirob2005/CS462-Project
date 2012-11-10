@@ -19,7 +19,7 @@ class ItemID {
             return false;
         }
     }
-    public int itemID()
+    public int getINT()
     {
         return this.itemID;
     }

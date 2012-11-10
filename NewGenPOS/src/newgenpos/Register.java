@@ -15,7 +15,13 @@ class Register {
     }
     public void enterItem(ItemID ItemID, int qty)throws SQLException{
         description = catalog.getProductDescription(ItemID, qty);
-        currentSale.makeLineItem(description, qty);
+        if(description == null){
+            Ui_NewGenPOS.clearProductInput();
+        }
+        else
+        {
+            currentSale.makeLineItem(description, qty);    
+        }        
     }
     public void makeNewSale(){
         currentSale = new Sale();

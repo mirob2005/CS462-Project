@@ -25,29 +25,29 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     
     private QWidget centralwidget;
     private QPushButton addItemButton;
-    private QLineEdit productInput;
+    private static QLineEdit productInput;
     private QLabel productInputLabel;
     private QFrame line;
     private QScrollArea itemDescrScrollArea;
     private QWidget scrollAreaWidgetContents;
-    private QTextEdit itemDescrTextEdit;
+    private static QTextEdit itemDescrTextEdit;
     private QScrollArea cartScrollArea;
     private QWidget scrollAreaWidgetContents_2;
     private QTableView cartTableView;
     private QLabel qtyInputLabel;
-    private QLineEdit qtyInput;
+    private static QLineEdit qtyInput;
     private QToolButton paidButton;
     private QLabel itemDescrLabel;
     private QLabel cartLabel;
     private QLabel titleLabel;
-    private QLCDNumber totalDisplay;
+    private static QLCDNumber totalDisplay;
     private QLabel totalLabel;
     private QPushButton pushButton;
     private QPushButton pushButton_2;
     private QPushButton pushButton_3;
     private QLabel label;
     private List<Double> priceList = new ArrayList<>();
-    private QStandardItemModel model = new QStandardItemModel(0,4);
+    private static QStandardItemModel model = new QStandardItemModel(0,4);
 
 
     public Ui_NewGenPOS() { 
@@ -369,7 +369,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         int quantity = Integer.parseInt(qtyInput.text());
         return quantity;
     }
-    public void setText(String text){
+    public static void setText(String text){
         itemDescrTextEdit.setPlainText(text);
     }
     public void appendText(String text){
@@ -388,7 +388,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 
                     Statement st = con.createStatement();
 
-                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.itemID());
+                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.getINT());
 
                     if(rs.first() == false)
                     {
@@ -441,7 +441,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
             
         clearProductInput();
     }
-    public void clearProductInput() {
+    public static void clearProductInput() {
         productInput.setText("");
         qtyInput.setText("1");
     }
@@ -470,17 +470,20 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
               
     }
     public static void addItemToTable(SalesLineItem cart){
-//        String quantityString = Integer.toString(cart.getQty());
-//        String productIDString = Integer.toString(cart.getDescription().getItemID().itemID());
-//        
-//        List newRow = new ArrayList();
-//        newRow.add(new QStandardItem(productIDString));
-//        newRow.add(new QStandardItem(cart.getDescription().getDescription()));
-//        newRow.add(new QStandardItem(cart.getPrice().getFormatted()));
-//        newRow.add(new QStandardItem(quantityString));
-//        model.appendRow(newRow);
-//        
-//        displayPrice();
+        ProductDescription desc = cart.getDescription();
+        int qty = cart.getQty();
+        ItemID ID = desc.getItemID();
+        
+        String quantityString = Integer.toString(qty);
+        String productIDString = Integer.toString(ID.getINT());
+        
+        List newRow = new ArrayList();
+        newRow.add(new QStandardItem(productIDString));
+        newRow.add(new QStandardItem(cart.getDescription().getDescription()));
+        newRow.add(new QStandardItem(cart.getPrice().getFormatted()));
+        newRow.add(new QStandardItem(quantityString));
+        model.appendRow(newRow);
+
 //        displayDescription(productID, quantity, description, priceString, updatedStock);
     }
     double RoundTo2Decimals(double val) {
@@ -501,6 +504,9 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         totalDisplay.display(totalPrice);      
     }
+    public static void displayTotal(Money total){
+        totalDisplay.display(total.getFormatted());
+    }
     public void displayDescription(int productID, int qty, String description, String priceString, int updatedStock) {
         if(qty==1)
         {
@@ -509,6 +515,23 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         else
         {
             setText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
+        }
+    }
+    public static void displayDescription(SalesLineItem cart) {
+        int qty = cart.getQty();
+        ProductDescription desc = cart.getDescription();
+        String description = desc.getDecsription();
+        ItemID itemID = desc.getItemID();  
+        Money price = desc.getPrice();
+        int updatedStock = desc.getStock();
+        
+        if(qty==1)
+        {
+            setText(""+qty+" "+ description+", product ID "+ itemID.getINT() +" was successfully added to cart at "+price.getFormatted()+" each. There are "+updatedStock+" left");    
+        }
+        else
+        {
+            setText(""+qty+" "+ description+"'s, product ID "+ itemID.getINT() +" was successfully added to cart at "+price.getFormatted()+" each. There are "+updatedStock+" left");    
         }
     }
 }
