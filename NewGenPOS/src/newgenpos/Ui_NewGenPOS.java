@@ -385,44 +385,45 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
                 {
 
                     int quantity = getProductQty();
-
-                    Statement st = con.createStatement();
-
-                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.getINT());
-
-                    if(rs.first() == false)
-                    {
-                        setText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
-                    }
-                    else
-                    {   
-                     
-                        String description = rs.getString("description");
-                        double price = Double.parseDouble(rs.getString("price"));
-                        int currentStock = rs.getInt("stock");
-
-                        int updatedStock = currentStock - quantity;                    
-                        if(updatedStock <0){
-                            if(quantity == 1)
-                            {
-                                setText("No "+description+"'s are left. Please chose another item.");
-                            }
-                            else
-                            {
-                                setText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
-                            }
-                            updatedStock = currentStock;
-                        }
-                        else{
-                            //Update table with currentStock - quantity with check that stock >=0 afterwards
-                            st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);  
-                            
-                            //START HERE
-//                    register.enterItem(itemID, quantity);   
-
-                            addItemToTable(productID, quantity, description, price, updatedStock);            
-                        }
-                    }
+                    //START HERE
+                    register.enterItem(itemID, quantity);   
+                    
+//                    Statement st = con.createStatement();
+//
+//                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.getINT());
+//
+//                    if(rs.first() == false)
+//                    {
+//                        setText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
+//                    }
+//                    else
+//                    {   
+//                     
+//                        String description = rs.getString("description");
+//                        double price = Double.parseDouble(rs.getString("price"));
+//                        int currentStock = rs.getInt("stock");
+//
+//                        int updatedStock = currentStock - quantity;                    
+//                        if(updatedStock <0){
+//                            if(quantity == 1)
+//                            {
+//                                setText("No "+description+"'s are left. Please chose another item.");
+//                            }
+//                            else
+//                            {
+//                                setText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
+//                            }
+//                            updatedStock = currentStock;
+//                        }
+//                        else{
+//                            //Update table with currentStock - quantity with check that stock >=0 afterwards
+//                            st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);  
+//                            
+//
+//
+//                            addItemToTable(productID, quantity, description, price, updatedStock);            
+//                        }
+//                    }
                 }
                 else{
                     setText("Product ID is invalid, must be 6 numbers ranging between 100000 and 999999");

@@ -20,6 +20,10 @@ class Money {
         Money amount = new Money(total);
         return amount;
     }
+    public Money add(Money amountToAdd){
+        Money result = new Money(this.price+amountToAdd.price);
+        return result;
+    }
     public String getFormatted(){
         String priceString = "$";
         DecimalFormat twoDecimals = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));

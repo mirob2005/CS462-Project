@@ -15,6 +15,7 @@ class Register {
     }
     public void enterItem(ItemID ItemID, int qty)throws SQLException{
         description = catalog.getProductDescription(ItemID, qty);
+        //No such ItemID or out of stock returns description = null
         if(description == null){
             Ui_NewGenPOS.clearProductInput();
         }
