@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class Main { 
     private static int storeID = 1;
-    private static String storeAddress = "CSUF";
-    private static String storeName = "NewGen";
+    private static String storeAddress = "800 North State College Boulevard, Fullerton, CA 92831";
+    private static String storeName = "CSUF NewGen Store";
     private static Store myStore;
     private static Register register;
     

@@ -20,13 +20,12 @@ public class Store {
             System.out.println("Database Not Connected, Product IDs will not be found!");
         } 
         
-        register = new Register(catalog);        
+        register = new Register(this.catalog, this.storeID, this.address, this.name);        
     }
     
     public Register getRegister(){
         return register;
-    }
-    
+    }    
     public void addCompleteSale(Sale SaleID){
         //Add to a completed sales database
     }

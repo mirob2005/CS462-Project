@@ -12,8 +12,8 @@ import java.util.List;
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
-    private QDialog dialog;
-    private Ui_Dialog UIdialog;
+//    private QDialog dialog;
+//    private Ui_Dialog UIdialog;
     private ProductCatalog pc;
     private static Register register;
     
@@ -29,16 +29,15 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QWidget scrollAreaWidgetContents_2;
     private QTableView cartTableView;
     private QLabel qtyInputLabel;
-    private static QLineEdit qtyInput;
-    private QToolButton paidButton;
+    private static QLineEdit qtyInput;   
     private QLabel itemDescrLabel;
     private QLabel cartLabel;
     private QLabel titleLabel;
     private static QLCDNumber totalDisplay;
     private QLabel totalLabel;
-    private QPushButton pushButton;
-    private QPushButton pushButton_2;
-    private QPushButton pushButton_3;
+    private QPushButton creditButton;
+    private QPushButton cashButton;
+    private QPushButton checkButton;
     private QLabel label;
     private static QStandardItemModel model = new QStandardItemModel(0,4);
 
@@ -96,11 +95,11 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         itemDescrScrollArea = new QScrollArea(centralwidget);
         itemDescrScrollArea.setObjectName("itemDescrScrollArea");
-        itemDescrScrollArea.setGeometry(new QRect(20, 50, 450, 150));
+        itemDescrScrollArea.setGeometry(new QRect(20, 50, 450, 100));
         itemDescrScrollArea.setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents");
-        scrollAreaWidgetContents.setGeometry(new QRect(0, 0, 448, 148));
+        scrollAreaWidgetContents.setGeometry(new QRect(0, 0, 450, 100));
         itemDescrTextEdit = new QTextEdit(scrollAreaWidgetContents);
         itemDescrTextEdit.setObjectName("itemDescrTextEdit");
         itemDescrTextEdit.setGeometry(new QRect(0, 0, 450, 150));
@@ -125,14 +124,14 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         cartScrollArea = new QScrollArea(centralwidget);
         cartScrollArea.setObjectName("cartScrollArea");
-        cartScrollArea.setGeometry(new QRect(20, 230, 450, 150));
+        cartScrollArea.setGeometry(new QRect(20, 180, 450, 200));
         cartScrollArea.setWidgetResizable(true);
         scrollAreaWidgetContents_2 = new QWidget();
         scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2");
-        scrollAreaWidgetContents_2.setGeometry(new QRect(0, 0, 448, 148));
+        scrollAreaWidgetContents_2.setGeometry(new QRect(0, 0, 450, 200));
         cartTableView = new QTableView(scrollAreaWidgetContents_2);
         cartTableView.setObjectName("cartTableView");
-        cartTableView.setGeometry(new QRect(0, 0, 450, 150));
+        cartTableView.setGeometry(new QRect(0, 0, 450, 200));
         
         clearCart();
         
@@ -152,21 +151,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         qtyInput = new QLineEdit(centralwidget);
         qtyInput.setObjectName("qtyInput");
         qtyInput.setGeometry(new QRect(500, 490, 50, 30));
-
         qtyInput.setFont(font3);
-        qtyInput.setMaxLength(2);
-        
-        
-        
-        paidButton = new QToolButton(centralwidget);
-        paidButton.setObjectName("paidButton");
-        paidButton.setGeometry(new QRect(540, 395, 100, 50));
-        QFont font4 = new QFont();
-        font4.setFamily("Arial");
-        font4.setPointSize(12);
-        font4.setBold(true);
-        font4.setWeight(75);
-        paidButton.setFont(font4);
+        qtyInput.setMaxLength(2);             
         
         itemDescrLabel = new QLabel(centralwidget);
         itemDescrLabel.setObjectName("itemDescrLabel");
@@ -179,7 +165,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         itemDescrLabel.setFont(font5);
         cartLabel = new QLabel(centralwidget);
         cartLabel.setObjectName("cartLabel");
-        cartLabel.setGeometry(new QRect(20, 200, 53, 30));
+        cartLabel.setGeometry(new QRect(20, 150, 53, 30));
         QFont font6 = new QFont();
         font6.setFamily("Arial");
         font6.setPointSize(12);
@@ -217,33 +203,33 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font9.setBold(true);
         font9.setWeight(75);
         totalLabel.setFont(font9);
-        pushButton = new QPushButton(centralwidget);
-        pushButton.setObjectName("pushButton");
-        pushButton.setGeometry(new QRect(150, 395, 100, 50));
+        creditButton = new QPushButton(centralwidget);
+        creditButton.setObjectName("creditButton");
+        creditButton.setGeometry(new QRect(150, 395, 100, 50));
         QFont font10 = new QFont();
         font10.setFamily("Arial");
         font10.setPointSize(12);
         font10.setBold(true);
         font10.setWeight(75);
-        pushButton.setFont(font10);
-        pushButton_2 = new QPushButton(centralwidget);
-        pushButton_2.setObjectName("pushButton_2");
-        pushButton_2.setGeometry(new QRect(280, 395, 100, 50));
+        creditButton.setFont(font10);
+        cashButton = new QPushButton(centralwidget);
+        cashButton.setObjectName("cashButton");
+        cashButton.setGeometry(new QRect(280, 395, 100, 50));
         QFont font11 = new QFont();
         font11.setFamily("Arial");
         font11.setPointSize(12);
         font11.setBold(true);
         font11.setWeight(75);
-        pushButton_2.setFont(font11);
-        pushButton_3 = new QPushButton(centralwidget);
-        pushButton_3.setObjectName("pushButton_3");
-        pushButton_3.setGeometry(new QRect(410, 395, 100, 50));
+        cashButton.setFont(font11);
+        checkButton = new QPushButton(centralwidget);
+        checkButton.setObjectName("checkButton");
+        checkButton.setGeometry(new QRect(410, 395, 100, 50));
         QFont font12 = new QFont();
         font12.setFamily("Arial");
         font12.setPointSize(12);
         font12.setBold(true);
         font12.setWeight(75);
-        pushButton_3.setFont(font12);
+        checkButton.setFont(font12);
         label = new QLabel(centralwidget);
         label.setObjectName("label");
         label.setGeometry(new QRect(20, 395, 100, 50));
@@ -257,21 +243,20 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         QWidget.setTabOrder(cartTableView, cartScrollArea);
         QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
         QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);
-        QWidget.setTabOrder(itemDescrTextEdit, pushButton);
-        QWidget.setTabOrder(pushButton, pushButton_2);
-        QWidget.setTabOrder(pushButton_2, pushButton_3);
-        QWidget.setTabOrder(pushButton_3, paidButton);
-        QWidget.setTabOrder(paidButton, productInput);
+        QWidget.setTabOrder(itemDescrTextEdit, creditButton);
+        QWidget.setTabOrder(creditButton, cashButton);
+        QWidget.setTabOrder(cashButton, checkButton);
+        QWidget.setTabOrder(checkButton, productInput);        
         QWidget.setTabOrder(productInput, qtyInput);
         QWidget.setTabOrder(qtyInput, addItemButton);
         retranslateUi(NewGenPOS);
 
 
-        //These send signals when these buttons are clicked
-        paidButton.clicked.connect(this, "on_paidButton_clicked()");
-        addItemButton.clicked.connect(this, "on_addItemButton_clicked()");
-        
-
+        //These send signals when these buttons are clicked        
+        cashButton.clicked.connect(this,"on_cashButton_clicked()");
+        creditButton.clicked.connect(this,"on_creditButton_clicked()");
+        checkButton.clicked.connect(this,"on_checkButton_clicked()");
+        addItemButton.clicked.connect(this, "on_addItemButton_clicked()");                
         
         NewGenPOS.connectSlotsByName();
     } // setupUi
@@ -282,8 +267,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         addItemButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Add Item", null));
         productInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Enter Product ID Here:", null));
         qtyInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Qty", null));
-        qtyInput.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "1", null));
-        paidButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "PAID", null));
+        qtyInput.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "1", null));        
         itemDescrLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Item Description", null));
         cartLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cart", null));
         titleLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"+
@@ -298,43 +282,40 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 "p, li { white-space: pre-wrap; }\n"+
 "</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:600; font-style:normal;\">\n"+
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Total Owed:</p></body></html>", null));
-        pushButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Credit", null));
-        pushButton_2.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cash", null));
-        pushButton_3.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Check", null));
+        creditButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Credit", null));
+        cashButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cash", null));
+        checkButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Check", null));
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
     } // retranslateUi
     
-    public void on_paidButton_clicked() {
-        showReceipt();
+    public void on_cashButton_clicked(){        
+        //Open Window for Amount - do inside register.makePayment()
+        Money payment = new Money(99999);
+        Payment newPayment = new CashPayment(payment);
+        register.makePayment(newPayment);
+        on_paidButton_clicked();
+    }
+    public void on_creditButton_clicked(){  
+        Money payment = new Money(99999);
+        Payment newPayment = new CreditPayment(payment);
+        register.makePayment(newPayment);        
+        on_paidButton_clicked();
+    }
+    public void on_checkButton_clicked(){
+        Money payment = new Money(99999);
+        Payment newPayment = new CheckPayment(payment);
+        register.makePayment(newPayment);        
+        on_paidButton_clicked();
+    }
+    public void on_paidButton_clicked(){
+        //Insert Payment Method HERE
+        register.createReceipt();
         register.endSale();
         setText("Thank You for Shopping!"); 
         totalDisplay.display(0);
         clearProductInput();
         clearCart();
         register.makeNewSale();
-    }
-    public void showReceipt(){
-        dialog = new QDialog();
-        UIdialog = new Ui_Dialog();
-        UIdialog.setupUi(dialog);
-        dialog.setWindowTitle("Receipt");
-        dialog.show();
-                
-        UIdialog.setText("NewGenPOS Sale\nDate\tTime\n---------------------------\n");        
-        String receipt = "";
-        for(int i=0; i< model.rowCount(); i++){
-            for(int j=0; j<model.columnCount(); j++){
-                Object index = model.data(i,j);
-                receipt += index.toString();
-                receipt += "\t";
-            }
-             UIdialog.appendText(receipt);
-             receipt = "";
-        }          
-        UIdialog.appendText("\nSubtotal\t...");  
-        UIdialog.appendText("Tax\t...");  
-        UIdialog.appendText("Total\t...");  
-        UIdialog.appendText("\nPayment Method\t...");  
     }
     public void clearCart() {
         model.clear();
@@ -344,8 +325,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         model.setHorizontalHeaderItem(3, new QStandardItem("Qty"));
         
         cartTableView.setModel(model);
-        cartTableView.horizontalHeader().resizeSection(0,100);
-        cartTableView.horizontalHeader().resizeSection(1,195);
+        cartTableView.horizontalHeader().resizeSection(0,90);
+        cartTableView.horizontalHeader().resizeSection(1,203);
         cartTableView.horizontalHeader().resizeSection(2,90);
         cartTableView.horizontalHeader().resizeSection(3,45);
         

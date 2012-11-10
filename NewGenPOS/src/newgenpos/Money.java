@@ -19,6 +19,10 @@ class Money {
         Money result = new Money(this.price+amountToAdd.price);
         return result;
     }
+    public Money subtract(Money amountToSubtract){
+        Money result = new Money(this.price-amountToSubtract.price);
+        return result;       
+    }
     public String getFormatted(){
         String priceString = "$";
         DecimalFormat twoDecimals = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
