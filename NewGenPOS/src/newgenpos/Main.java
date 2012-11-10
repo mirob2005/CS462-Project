@@ -4,8 +4,6 @@ import com.trolltech.qt.gui.QApplication;
 import com.trolltech.qt.gui.QMainWindow;
 import java.sql.SQLException;
 
-
-
 public class Main { 
     private static int storeID = 1;
     private static String storeAddress = "CSUF";

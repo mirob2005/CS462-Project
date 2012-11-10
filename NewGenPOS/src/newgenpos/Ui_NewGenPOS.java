@@ -5,22 +5,16 @@ package newgenpos;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.*;
-
-import java.sql.*;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
     private QDialog dialog;
     private Ui_Dialog UIdialog;
-    private Connection con = ProductCatalog.con;
+    private ProductCatalog pc;
     private static Register register;
     
     private QWidget centralwidget;
@@ -46,18 +40,15 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QPushButton pushButton_2;
     private QPushButton pushButton_3;
     private QLabel label;
-    private List<Double> priceList = new ArrayList<>();
     private static QStandardItemModel model = new QStandardItemModel(0,4);
 
 
     public Ui_NewGenPOS() { 
         super();
         register = Main.getRegister();
+        pc = register.getProductCatalog();
         register.makeNewSale();
     }
-       
-    
-
 
     @Override
     public void setupUi(QMainWindow NewGenPOS)
@@ -118,7 +109,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font14.setFamily("Arial");
         font14.setPointSize(10);
         
-        if(con != null){
+        if(pc.connectionActive()){
              setText("Inventory Loaded Successfully!");
         }
         else{
@@ -358,8 +349,6 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cartTableView.horizontalHeader().resizeSection(2,90);
         cartTableView.horizontalHeader().resizeSection(3,45);
         
-        
-        priceList.clear();
     }
     public int getProductInput(){
         int productID = Integer.parseInt(productInput.text());
@@ -376,54 +365,15 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         itemDescrTextEdit.append(text);
     }
     public void on_addItemButton_clicked() throws SQLException{
-        if(con != null)
+        if(pc.connectionActive())
         {
             try{
                 int productID = getProductInput();
                 ItemID itemID = new ItemID(productID);
                 if(itemID.valid())
                 {
-
                     int quantity = getProductQty();
-                    //START HERE
                     register.enterItem(itemID, quantity);   
-                    
-//                    Statement st = con.createStatement();
-//
-//                    ResultSet rs = st.executeQuery("select * from Inventory where itemID = "+ itemID.getINT());
-//
-//                    if(rs.first() == false)
-//                    {
-//                        setText("Product with ID of \"" + productID + "\" DOES NOT exist. Please try again.");   
-//                    }
-//                    else
-//                    {   
-//                     
-//                        String description = rs.getString("description");
-//                        double price = Double.parseDouble(rs.getString("price"));
-//                        int currentStock = rs.getInt("stock");
-//
-//                        int updatedStock = currentStock - quantity;                    
-//                        if(updatedStock <0){
-//                            if(quantity == 1)
-//                            {
-//                                setText("No "+description+"'s are left. Please chose another item.");
-//                            }
-//                            else
-//                            {
-//                                setText("Only "+currentStock+" "+description+"'s are left. Please reduce quantity requested.");
-//                            }
-//                            updatedStock = currentStock;
-//                        }
-//                        else{
-//                            //Update table with currentStock - quantity with check that stock >=0 afterwards
-//                            st.executeUpdate("UPDATE Inventory SET stock = "+updatedStock+" WHERE itemID = "+productID);  
-//                            
-//
-//
-//                            addItemToTable(productID, quantity, description, price, updatedStock);            
-//                        }
-//                    }
                 }
                 else{
                     setText("Product ID is invalid, must be 6 numbers ranging between 100000 and 999999");
@@ -446,30 +396,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         productInput.setText("");
         qtyInput.setText("1");
     }
-    public void addItemToTable(int productID, int quantity, String description, double price, int updatedStock) {
-        
-        for(int i=0; i < quantity; i++) {
-            priceList.add(price);
-        }
-        
-        String priceString = "$";
-        DecimalFormat twoDecimals = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
-        priceString += (twoDecimals.format(priceList.get((priceList.size()-1))));
-        
-        String quantityString = Integer.toString(quantity);
-        String productIDString = Integer.toString(productID);
-        
-        List newRow = new ArrayList();
-        newRow.add(new QStandardItem(productIDString));
-        newRow.add(new QStandardItem(description));
-        newRow.add(new QStandardItem(priceString));
-        newRow.add(new QStandardItem(quantityString));
-        model.appendRow(newRow);
-        
-        displayPrice();
-        displayDescription(productID, quantity, description, priceString, updatedStock);
-              
-    }
+
     public static void addItemToTable(SalesLineItem cart){
         ProductDescription desc = cart.getDescription();
         int qty = cart.getQty();
@@ -484,44 +411,16 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         newRow.add(new QStandardItem(cart.getPrice().getFormatted()));
         newRow.add(new QStandardItem(quantityString));
         model.appendRow(newRow);
+    }
 
-//        displayDescription(productID, quantity, description, priceString, updatedStock);
-    }
-    double RoundTo2Decimals(double val) {
-        DecimalFormat df2 = new DecimalFormat("###.##");
-        return Double.valueOf(df2.format(val));
-    }
-    public void displayPrice() {
-        double totalPrice = 0;
-        
-        for(int i =0; i < priceList.size(); i++) {
-             totalPrice += priceList.get(i);
-        }
-        
-        //Calculate Tax
-        totalPrice = totalPrice*1.08;
-        totalPrice = RoundTo2Decimals(totalPrice);
-
-        
-        totalDisplay.display(totalPrice);      
-    }
     public static void displayTotal(Money total){
         totalDisplay.display(total.getFormatted());
     }
-    public void displayDescription(int productID, int qty, String description, String priceString, int updatedStock) {
-        if(qty==1)
-        {
-            setText(""+qty+" "+ description+", product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
-        }
-        else
-        {
-            setText(""+qty+" "+ description+"'s, product ID "+ productID +" was successfully added to cart at "+priceString+" each. There are "+updatedStock+" left");    
-        }
-    }
+
     public static void displayDescription(SalesLineItem cart) {
         int qty = cart.getQty();
         ProductDescription desc = cart.getDescription();
-        String description = desc.getDecsription();
+        String description = desc.getDescription();
         ItemID itemID = desc.getItemID();  
         Money price = desc.getPrice();
         int updatedStock = desc.getStock();

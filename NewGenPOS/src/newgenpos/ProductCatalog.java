@@ -1,14 +1,10 @@
 package newgenpos;
 
 import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.net.*;
 
 
 public class ProductCatalog {
-    //CHange to private when able
-    public static Connection con = null;
+    private static Connection con = null;
     private ProductDescription description;
         
     public ProductCatalog() throws SQLException{

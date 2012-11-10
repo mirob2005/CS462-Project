@@ -23,9 +23,5 @@ class ProductDescription {
     }
     public int getStock(){
         return this.stockRemaining;
-    }    
-    public String getDecsription(){
-        return this.description;
-    }
-    
+    }   
 }

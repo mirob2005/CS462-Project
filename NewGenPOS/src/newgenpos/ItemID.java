@@ -22,6 +22,5 @@ class ItemID {
     public int getINT()
     {
         return this.itemID;
-    }
-    
+    }   
 }

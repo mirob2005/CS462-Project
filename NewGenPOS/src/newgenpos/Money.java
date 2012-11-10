@@ -15,11 +15,6 @@ class Money {
         Money total = new Money(this.price*tax);
         return total;
     }
-    public Money mutliply(Money Price, int qty){
-        double total = Price.price*qty;
-        Money amount = new Money(total);
-        return amount;
-    }
     public Money add(Money amountToAdd){
         Money result = new Money(this.price+amountToAdd.price);
         return result;

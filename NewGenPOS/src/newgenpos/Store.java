@@ -28,6 +28,6 @@ public class Store {
     }
     
     public void addCompleteSale(Sale SaleID){
-        //...
+        //Add to a completed sales database
     }
 }

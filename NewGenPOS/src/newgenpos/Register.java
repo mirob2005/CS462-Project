@@ -30,4 +30,7 @@ class Register {
     public void makePayment(Money cashTendered){
         currentSale.makePayment(cashTendered);
     }
+    public ProductCatalog getProductCatalog(){
+        return this.catalog;
+    }
 }
