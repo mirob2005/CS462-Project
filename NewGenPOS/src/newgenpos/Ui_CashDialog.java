@@ -1,22 +1,18 @@
-/********************************************************************************
-** Form generated from reading ui file 'cashDialog.jui'
-**
-** Created: Sat Nov 10 13:49:28 2012
-**      by: Qt User Interface Compiler version 4.5.2
-**
-** WARNING! All changes made in this file will be lost when recompiling ui file!
-********************************************************************************/
+
+package newgenpos;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
+public class Ui_CashDialog implements com.trolltech.qt.QUiForm<QDialog>
 {
-    public QDialogButtonBox acceptanceBox;
-    public QLabel cashAmounLabel;
-    public QPlainTextEdit cashAmountInput;
+    private QDialogButtonBox acceptanceBox;
+    private QLabel cashAmounLabel;
+    private QLineEdit cashAmountInput;         
 
-    public Ui_Dialog() { super(); }
+    public Ui_CashDialog() { 
+        super();        
+    }
 
     public void setupUi(QDialog Dialog)
     {
@@ -35,7 +31,7 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         font.setPointSize(18);
         cashAmounLabel.setFont(font);
         cashAmounLabel.setLayoutDirection(com.trolltech.qt.core.Qt.LayoutDirection.LeftToRight);
-        cashAmountInput = new QPlainTextEdit(Dialog);
+        cashAmountInput = new QLineEdit(Dialog);
         cashAmountInput.setObjectName("cashAmountInput");
         cashAmountInput.setGeometry(new QRect(40, 70, 100, 30));
         retranslateUi(Dialog);
@@ -45,11 +41,14 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         Dialog.connectSlotsByName();
     } // setupUi
 
-    void retranslateUi(QDialog Dialog)
+    private void retranslateUi(QDialog Dialog)
     {
         Dialog.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Dialog", null));
         cashAmounLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Enter Cash Amount:", null));
     } // retranslateUi
-
+    
+    public QLineEdit getInput(){
+        return this.cashAmountInput;
+    }
 }
 

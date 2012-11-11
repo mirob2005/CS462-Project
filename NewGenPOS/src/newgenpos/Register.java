@@ -13,12 +13,18 @@ class Register {
     private int storeID;
     private String storeAddr;
     private String storeName;
+    private Money paymentAmount;
+    private Money total;
     //Receipt Sections
     List<String> header;
     List<String> itemList;
     List<String> footer;
     private QDialog dialog;
-    private Ui_Dialog UIdialog;
+    private Ui_ReceiptDialog UIReceiptdialog;
+    //Payment Dialogs
+    private Ui_CashDialog UICashdialog;
+    private Ui_CreditDialog UICreditdialog;
+    private Ui_CheckDialog UICheckdialog;
     
     
     public Register(ProductCatalog pc, int id, String addr, String name){
@@ -29,6 +35,10 @@ class Register {
     }
     public void endSale(){
         currentSale.becomeComplete();
+        Ui_NewGenPOS.setText("Thank You for Shopping!"); 
+        Ui_NewGenPOS.setDisplay(0);
+        Ui_NewGenPOS.clearProductInput();
+        Ui_NewGenPOS.clearCart();        
     }
     public void enterItem(ItemID ItemID, int qty)throws SQLException{
         description = catalog.getProductDescription(ItemID, qty);
@@ -61,13 +71,13 @@ class Register {
         }
         
         Money subTotal = currentSale.getSubTotal();
-        Money total = currentSale.getTotal();
+        this.total = currentSale.getTotal();
         
-        Money tax = total.subtract(subTotal);        
+        Money tax = this.total.subtract(subTotal);        
         
         this.footer.add("\nSubtotal\t"+subTotal.getFormatted());        
         this.footer.add("Tax\t"+tax.getFormatted());
-        this.footer.add("Total\t"+total.getFormatted());
+        this.footer.add("Total\t"+this.total.getFormatted());
         
         this.footer.add("-----------------------------------------------\n");
         
@@ -81,27 +91,28 @@ class Register {
         if(payment.isCheck()){
             this.footer.add("Payment Method\tCHECK");
         }
+        this.footer.add("Payment Amount\t"+this.paymentAmount.getFormatted());
         Money cashBack = currentSale.getCashBack(); 
         this.footer.add("Amount Back\t"+cashBack.getFormatted());
         
         this.printReceipt();
     }
-    public void printReceipt(){
+    private void printReceipt(){
         dialog = new QDialog();
-        UIdialog = new Ui_Dialog();
-        UIdialog.setupUi(dialog);
+        UIReceiptdialog = new Ui_ReceiptDialog();
+        UIReceiptdialog.setupUi(dialog);
         dialog.setWindowTitle("Receipt");
         dialog.show();
         
-        UIdialog.setText("");
+        UIReceiptdialog.setText("");
         for(int i=0; i<this.header.size();i++){
-            UIdialog.appendText(this.header.get(i));
+            UIReceiptdialog.appendText(this.header.get(i));
         }
         for(int i=0; i<this.itemList.size();i++){
-            UIdialog.appendText(this.itemList.get(i));
+            UIReceiptdialog.appendText(this.itemList.get(i));
         }
         for(int i=0; i<this.footer.size();i++){
-            UIdialog.appendText(this.footer.get(i));
+            UIReceiptdialog.appendText(this.footer.get(i));
         }       
     }
     public void makeNewSale(){
@@ -109,6 +120,59 @@ class Register {
     }
     public void makePayment(Payment paymentAmount){
         currentSale.makePayment(paymentAmount);
+    }
+    public boolean makeCashPayment(){        
+        dialog = new QDialog();
+        UICashdialog = new Ui_CashDialog();
+        UICashdialog.setupUi(dialog);
+        dialog.setWindowTitle("Enter Cash Amount:");
+        dialog.show();
+
+        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+            String input = UICashdialog.getInput().text();
+                        
+            try{
+                Double paymentInput = Double.parseDouble(input);
+                this.paymentAmount = new Money(paymentInput);
+                //Ensure payment is >= the total
+                this.total = currentSale.getTotal();
+                if(this.paymentAmount.checkTotal(this.total)){
+                    Payment payment = new CashPayment(this.paymentAmount);
+                    this.makePayment(payment);
+                    return true;
+                }
+                else{
+                    Ui_NewGenPOS.setText("Insufficient Funds!");
+                    return false;
+                }
+            }
+            catch(NumberFormatException e){
+                Ui_NewGenPOS.setText("Payment values must contain ONLY numbers! Try Again!");
+                return false;
+            }
+        }
+        else {
+            Ui_NewGenPOS.setText("Payment Canceled!");
+            return false;
+        }        
+    }
+    public boolean makeCreditPayment(){
+        dialog = new QDialog();
+        UICreditdialog = new Ui_CreditDialog();
+        UICreditdialog.setupUi(dialog);
+        dialog.setWindowTitle("Enter Credit Information:");
+        dialog.show();
+        //FINISH THIS
+        return false;
+    }
+    public boolean makeCheckPayment(){
+        dialog = new QDialog();
+        UICheckdialog = new Ui_CheckDialog();
+        UICheckdialog.setupUi(dialog);
+        dialog.setWindowTitle("Enter Check Information:");
+        dialog.show();
+        //FINISH THIS
+        return false;
     }
     public ProductCatalog getProductCatalog(){
         return this.catalog;

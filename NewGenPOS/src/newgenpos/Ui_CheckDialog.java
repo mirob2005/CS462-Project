@@ -1,35 +1,29 @@
-/********************************************************************************
-** Form generated from reading ui file 'checkDialog.jui'
-**
-** Created: Sat Nov 10 13:51:17 2012
-**      by: Qt User Interface Compiler version 4.5.2
-**
-** WARNING! All changes made in this file will be lost when recompiling ui file!
-********************************************************************************/
+
+package newgenpos;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
+public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
 {
     public QDialogButtonBox acceptanceBox;
     public QLabel checkInformationLabel;
     public QLabel nameLabel;
     public QLabel addr1Label;
-    public QPlainTextEdit nameInput;
+    public QLineEdit nameInput;
     public QLabel addr2Label;
     public QLabel phoneLabel;
     public QLabel licenseLabel;
     public QLabel checkNumLabel;
-    public QPlainTextEdit addr2Input;
-    public QPlainTextEdit addr1Input;
-    public QPlainTextEdit phoneInput;
-    public QPlainTextEdit licenseInput;
-    public QPlainTextEdit checkNumInput;
-    public QPlainTextEdit amountInput;
+    public QLineEdit addr2Input;
+    public QLineEdit addr1Input;
+    public QLineEdit phoneInput;
+    public QLineEdit licenseInput;
+    public QLineEdit checkNumInput;
+    public QLineEdit amountInput;
     public QLabel amountLabel;
 
-    public Ui_Dialog() { super(); }
+    public Ui_CheckDialog() { super(); }
 
     public void setupUi(QDialog Dialog)
     {
@@ -58,7 +52,7 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         addr1Label = new QLabel(Dialog);
         addr1Label.setObjectName("addr1Label");
         addr1Label.setGeometry(new QRect(40, 110, 130, 30));
-        nameInput = new QPlainTextEdit(Dialog);
+        nameInput = new QLineEdit(Dialog);
         nameInput.setObjectName("nameInput");
         nameInput.setGeometry(new QRect(180, 70, 270, 30));
         addr2Label = new QLabel(Dialog);
@@ -73,22 +67,25 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         checkNumLabel = new QLabel(Dialog);
         checkNumLabel.setObjectName("checkNumLabel");
         checkNumLabel.setGeometry(new QRect(40, 270, 130, 30));
-        addr2Input = new QPlainTextEdit(Dialog);
+        addr2Input = new QLineEdit(Dialog);
         addr2Input.setObjectName("addr2Input");
         addr2Input.setGeometry(new QRect(180, 150, 270, 30));
-        addr1Input = new QPlainTextEdit(Dialog);
+        addr1Input = new QLineEdit(Dialog);
         addr1Input.setObjectName("addr1Input");
         addr1Input.setGeometry(new QRect(180, 110, 270, 30));
-        phoneInput = new QPlainTextEdit(Dialog);
+        phoneInput = new QLineEdit(Dialog);
         phoneInput.setObjectName("phoneInput");
         phoneInput.setGeometry(new QRect(180, 190, 135, 30));
-        licenseInput = new QPlainTextEdit(Dialog);
+        phoneInput.setMaxLength(10);
+        licenseInput = new QLineEdit(Dialog);
         licenseInput.setObjectName("licenseInput");
         licenseInput.setGeometry(new QRect(180, 230, 135, 30));
-        checkNumInput = new QPlainTextEdit(Dialog);
+        licenseInput.setMaxLength(8);
+        checkNumInput = new QLineEdit(Dialog);
         checkNumInput.setObjectName("checkNumInput");
         checkNumInput.setGeometry(new QRect(180, 270, 75, 30));
-        amountInput = new QPlainTextEdit(Dialog);
+        checkNumInput.setMaxLength(6);
+        amountInput = new QLineEdit(Dialog);
         amountInput.setObjectName("amountInput");
         amountInput.setGeometry(new QRect(180, 310, 75, 30));
         amountLabel = new QLabel(Dialog);
@@ -113,6 +110,26 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         checkNumLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Check #:", null));
         amountLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Amount:", null));
     } // retranslateUi
-
+    public QLineEdit getAddr1(){
+        return this.addr1Input;
+    }
+    public QLineEdit getAddr2(){
+        return this.addr2Input;
+    }
+    public QLineEdit getAmount(){
+        return this.amountInput;
+    }
+    public QLineEdit getCheckNumber(){
+        return this.checkNumInput;
+    }
+    public QLineEdit getLicense(){
+        return this.licenseInput;
+    }
+    public QLineEdit getName(){
+        return this.nameInput;
+    }
+    public QLineEdit getPhone(){
+        return this.phoneInput;
+    }    
 }
 

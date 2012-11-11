@@ -39,14 +39,14 @@ class Sale {
         this.calcSubTotal(item, qty);
         this.calcTotal();
 
-        Ui_NewGenPOS.displayTotal(this.total);        
+        Ui_NewGenPOS.setDisplay(this.total);
     }
     
     public void makePayment(Payment paymentAmount){
         this.payment = paymentAmount;
         
         Money payment = this.payment.getAmount();
-        this.cashBack = payment.subtract(this.total);                
+        this.cashBack = payment.subtract(this.total);              
     }
     public void calcSubTotal(SalesLineItem item, int qty){
          Money ItemPrice = item.getPrice();

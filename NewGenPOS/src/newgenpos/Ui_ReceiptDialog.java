@@ -4,14 +4,14 @@ package newgenpos;
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
+public class Ui_ReceiptDialog implements com.trolltech.qt.QUiForm<QDialog>
 {
     private QScrollArea receiptScrollArea;
     private QWidget scrollAreaWidgetContents;
     private QTextEdit receiptTextEdit;
     private QLabel label;
 
-    public Ui_Dialog() { super(); }
+    public Ui_ReceiptDialog() { super(); }
 
     @Override
     public void setupUi(QDialog Dialog)

@@ -1,30 +1,23 @@
-/********************************************************************************
-** Form generated from reading ui file 'creditDialog.jui'
-**
-** Created: Sat Nov 10 13:50:38 2012
-**      by: Qt User Interface Compiler version 4.5.2
-**
-** WARNING! All changes made in this file will be lost when recompiling ui file!
-********************************************************************************/
+package newgenpos;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
 
-public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
+public class Ui_CreditDialog implements com.trolltech.qt.QUiForm<QDialog>
 {
     public QDialogButtonBox acceptanceBox;
     public QLabel creditInformationLabel;
     public QLabel cardNumberLabel;
     public QLabel expLabel;
-    public QPlainTextEdit cardNumberInput;
-    public QPlainTextEdit monthInput;
-    public QPlainTextEdit yearInput;
+    public QLineEdit cardNumberInput;
+    public QLineEdit monthInput;
+    public QLineEdit yearInput;
     public QLabel monthLabel;
     public QLabel yearLabel;
-    public QPlainTextEdit amountInput;
+    public QLineEdit amountInput;
     public QLabel amountLabel;
 
-    public Ui_Dialog() { super(); }
+    public Ui_CreditDialog() { super(); }
 
     public void setupUi(QDialog Dialog)
     {
@@ -53,22 +46,25 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         expLabel = new QLabel(Dialog);
         expLabel.setObjectName("expLabel");
         expLabel.setGeometry(new QRect(40, 110, 130, 30));
-        cardNumberInput = new QPlainTextEdit(Dialog);
+        cardNumberInput = new QLineEdit(Dialog);
         cardNumberInput.setObjectName("cardNumberInput");
         cardNumberInput.setGeometry(new QRect(180, 70, 275, 30));
-        monthInput = new QPlainTextEdit(Dialog);
+        cardNumberInput.setMaxLength(16);
+        monthInput = new QLineEdit(Dialog);
         monthInput.setObjectName("monthInput");
         monthInput.setGeometry(new QRect(250, 110, 50, 30));
-        yearInput = new QPlainTextEdit(Dialog);
+        monthInput.setMaxLength(2);
+        yearInput = new QLineEdit(Dialog);
         yearInput.setObjectName("yearInput");
         yearInput.setGeometry(new QRect(390, 110, 50, 30));
+        yearInput.setMaxLength(2);
         monthLabel = new QLabel(Dialog);
         monthLabel.setObjectName("monthLabel");
         monthLabel.setGeometry(new QRect(180, 110, 60, 30));
         yearLabel = new QLabel(Dialog);
         yearLabel.setObjectName("yearLabel");
         yearLabel.setGeometry(new QRect(330, 110, 50, 30));
-        amountInput = new QPlainTextEdit(Dialog);
+        amountInput = new QLineEdit(Dialog);
         amountInput.setObjectName("amountInput");
         amountInput.setGeometry(new QRect(180, 150, 75, 30));
         amountLabel = new QLabel(Dialog);
@@ -81,7 +77,7 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         Dialog.connectSlotsByName();
     } // setupUi
 
-    void retranslateUi(QDialog Dialog)
+    private void retranslateUi(QDialog Dialog)
     {
         Dialog.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Dialog", null));
         creditInformationLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Enter Credit Card Information:", null));
@@ -91,6 +87,17 @@ public class Ui_Dialog implements com.trolltech.qt.QUiForm<QDialog>
         yearLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Year", null));
         amountLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Amount:", null));
     } // retranslateUi
-
+    public QLineEdit getAmount(){
+        return this.amountInput;
+    }
+    public QLineEdit getCardNumber(){
+        return this.cardNumberInput;
+    }
+    public QLineEdit getMonth(){
+        return this.monthInput;
+    }
+    public QLineEdit getYear(){
+        return this.yearInput;
+    }
 }
 

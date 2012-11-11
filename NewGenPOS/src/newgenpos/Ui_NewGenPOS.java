@@ -12,8 +12,6 @@ import java.util.List;
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
-//    private QDialog dialog;
-//    private Ui_Dialog UIdialog;
     private ProductCatalog pc;
     private static Register register;
     
@@ -27,7 +25,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private static QTextEdit itemDescrTextEdit;
     private QScrollArea cartScrollArea;
     private QWidget scrollAreaWidgetContents_2;
-    private QTableView cartTableView;
+    private static QTableView cartTableView;
     private QLabel qtyInputLabel;
     private static QLineEdit qtyInput;   
     private QLabel itemDescrLabel;
@@ -289,35 +287,30 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     } // retranslateUi
     
     public void on_cashButton_clicked(){        
-        //Open Window for Amount - do inside register.makePayment()
-        Money payment = new Money(99999);
-        Payment newPayment = new CashPayment(payment);
-        register.makePayment(newPayment);
-        on_paidButton_clicked();
+        boolean success = register.makeCashPayment();
+        if(success){
+            register.createReceipt();
+            register.endSale();
+            register.makeNewSale();
+        }
     }
     public void on_creditButton_clicked(){  
-        Money payment = new Money(99999);
-        Payment newPayment = new CreditPayment(payment);
-        register.makePayment(newPayment);        
-        on_paidButton_clicked();
+        boolean success = register.makeCashPayment();//Change to Credit
+        if(success){
+            register.createReceipt();
+            register.endSale();
+            register.makeNewSale();
+        }
     }
     public void on_checkButton_clicked(){
-        Money payment = new Money(99999);
-        Payment newPayment = new CheckPayment(payment);
-        register.makePayment(newPayment);        
-        on_paidButton_clicked();
-    }
-    public void on_paidButton_clicked(){
-        //Insert Payment Method HERE
-        register.createReceipt();
-        register.endSale();
-        setText("Thank You for Shopping!"); 
-        totalDisplay.display(0);
-        clearProductInput();
-        clearCart();
-        register.makeNewSale();
-    }
-    public void clearCart() {
+        boolean success = register.makeCashPayment();//Change to check
+        if(success){
+            register.createReceipt();
+            register.endSale();
+            register.makeNewSale();
+        }
+    }    
+    public static void clearCart() {
         model.clear();
         model.setHorizontalHeaderItem(0, new QStandardItem("Product ID"));
         model.setHorizontalHeaderItem(1, new QStandardItem("Product Name"));
@@ -342,7 +335,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     public static void setText(String text){
         itemDescrTextEdit.setPlainText(text);
     }
-    public void appendText(String text){
+    public static void appendText(String text){
         itemDescrTextEdit.append(text);
     }
     public void on_addItemButton_clicked() throws SQLException{
@@ -393,11 +386,15 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         newRow.add(new QStandardItem(quantityString));
         model.appendRow(newRow);
     }
-
-    public static void displayTotal(Money total){
-        totalDisplay.display(total.getFormatted());
+    public static void setDisplay(double value){
+        totalDisplay.display(value);
     }
-
+    public static void setDisplay(String value){
+        totalDisplay.display(value);
+    }
+    public static void setDisplay(Money value){
+        totalDisplay.display(value.getFormatted());
+    }
     public static void displayDescription(SalesLineItem cart) {
         int qty = cart.getQty();
         ProductDescription desc = cart.getDescription();

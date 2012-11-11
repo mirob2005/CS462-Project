@@ -29,4 +29,12 @@ class Money {
         priceString += (twoDecimals.format(this.price));        
         return priceString;
     }
+    public boolean checkTotal(Money total){
+        if(this.price >= total.price){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
