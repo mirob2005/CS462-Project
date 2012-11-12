@@ -14,11 +14,11 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
 {
     private ProductCatalog pc;
     private static Register register;
+    private QDialog dialog;
+    private static Ui_AddItem UIAddItem;
     
     private QWidget centralwidget;
     private QPushButton addItemButton;
-    private static QLineEdit productInput;
-    private QLabel productInputLabel;
     private QFrame line;
     private QScrollArea itemDescrScrollArea;
     private QWidget scrollAreaWidgetContents;
@@ -26,8 +26,6 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QScrollArea cartScrollArea;
     private QWidget scrollAreaWidgetContents_2;
     private static QTableView cartTableView;
-    private QLabel qtyInputLabel;
-    private static QLineEdit qtyInput;   
     private QLabel itemDescrLabel;
     private QLabel cartLabel;
     private QLabel titleLabel;
@@ -37,7 +35,10 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QPushButton cashButton;
     private QPushButton checkButton;
     private QLabel label;
+    
     private static QStandardItemModel model = new QStandardItemModel(0,4);
+    private String productIDFromAddItem;
+    private String qtyFromAddItem;
 
 
     public Ui_NewGenPOS() { 
@@ -58,39 +59,20 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         addItemButton = new QPushButton(centralwidget);
         addItemButton.setObjectName("addItemButton");
-        addItemButton.setGeometry(new QRect(560, 490, 100, 30));
+        addItemButton.setGeometry(new QRect(240, 470, 200, 60));
         QFont font = new QFont();
         font.setFamily("Arial");
-        font.setPointSize(12);
+        font.setPointSize(16);
         font.setBold(true);
         font.setWeight(75);
         addItemButton.setFont(font);
-        
-        QFont font3 = new QFont();
-        font3.setFamily("Arial");
-        font3.setPointSize(12);
-        productInput = new QLineEdit(centralwidget);
-        productInput.setObjectName("productInput");
-        productInput.setGeometry(new QRect(20, 490, 80, 30));
-        productInput.setFont(font3);
-        productInput.setMaxLength(6);
-        
-        productInputLabel = new QLabel(centralwidget);
-        productInputLabel.setObjectName("productInputLabel");
-        productInputLabel.setGeometry(new QRect(20, 460, 225, 30));
-        QFont font1 = new QFont();
-        font1.setFamily("Arial");
-        font1.setPointSize(12);
-        font1.setBold(true);
-        font1.setWeight(75);
-        productInputLabel.setFont(font1);
+
         line = new QFrame(centralwidget);
         line.setObjectName("line");
         line.setGeometry(new QRect(0, 450, 680, 20));
         line.setFrameShape(QFrame.Shape.HLine);
         line.setFrameShadow(QFrame.Shadow.Sunken);
-        
-        
+                
         itemDescrScrollArea = new QScrollArea(centralwidget);
         itemDescrScrollArea.setObjectName("itemDescrScrollArea");
         itemDescrScrollArea.setGeometry(new QRect(20, 50, 450, 100));
@@ -135,22 +117,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         
         //Prevent Editing of Cells
         cartTableView.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);
-        cartScrollArea.setWidget(scrollAreaWidgetContents_2);
-        
-        qtyInputLabel = new QLabel(centralwidget);
-        qtyInputLabel.setObjectName("qtyInputLabel");
-        qtyInputLabel.setGeometry(new QRect(510, 460, 40, 30));
-        QFont font2 = new QFont();
-        font2.setFamily("Arial");
-        font2.setPointSize(12);
-        font2.setBold(true);
-        font2.setWeight(75);
-        qtyInputLabel.setFont(font2);
-        qtyInput = new QLineEdit(centralwidget);
-        qtyInput.setObjectName("qtyInput");
-        qtyInput.setGeometry(new QRect(500, 490, 50, 30));
-        qtyInput.setFont(font3);
-        qtyInput.setMaxLength(2);             
+        cartScrollArea.setWidget(scrollAreaWidgetContents_2);            
         
         itemDescrLabel = new QLabel(centralwidget);
         itemDescrLabel.setObjectName("itemDescrLabel");
@@ -238,9 +205,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font13.setWeight(75);
         label.setFont(font13);
         NewGenPOS.setCentralWidget(centralwidget);
-        QWidget.setTabOrder(itemDescrTextEdit, productInput);
-        QWidget.setTabOrder(productInput, qtyInput);
-        QWidget.setTabOrder(qtyInput, addItemButton);
+        QWidget.setTabOrder(itemDescrTextEdit, addItemButton);
         QWidget.setTabOrder(addItemButton, creditButton);
         QWidget.setTabOrder(creditButton, cashButton);
         QWidget.setTabOrder(cashButton, checkButton);
@@ -249,7 +214,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
         QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);        
         retranslateUi(NewGenPOS);
-
+                
         //These send signals when these buttons are clicked        
         cashButton.clicked.connect(this,"on_cashButton_clicked()");
         creditButton.clicked.connect(this,"on_creditButton_clicked()");
@@ -263,9 +228,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     {
         NewGenPOS.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "MainWindow", null));
         addItemButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Add Item", null));
-        productInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Enter Product ID Here:", null));
-        qtyInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Qty", null));
-        qtyInput.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "1", null));        
+//        productInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Enter Product ID Here:", null));
+//        qtyInputLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Qty", null));        
         itemDescrLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Item Description", null));
         cartLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cart", null));
         titleLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"+
@@ -324,11 +288,11 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cartTableView.horizontalHeader().resizeSection(3,45);        
     }
     public int getProductInput(){
-        int productID = Integer.parseInt(productInput.text());
+        int productID = Integer.parseInt(this.productIDFromAddItem);
         return productID;
     }
     public int getProductQty(){
-        int quantity = Integer.parseInt(qtyInput.text());
+        int quantity = Integer.parseInt(this.qtyFromAddItem);
         return quantity;
     }
     public static void setText(String text){
@@ -337,7 +301,25 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     public static void appendText(String text){
         itemDescrTextEdit.append(text);
     }
-    public void on_addItemButton_clicked() throws SQLException{
+    public void on_addItemButton_clicked(){
+        dialog = new QDialog();
+        UIAddItem = new Ui_AddItem();
+        UIAddItem.setupUi(dialog);
+        dialog.setWindowTitle("Showing All Products");
+        dialog.show();        
+        
+        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+            this.productIDFromAddItem = UIAddItem.getProductID();
+            this.qtyFromAddItem = UIAddItem.getQTY();
+            addItem();
+        }
+        else {
+            setText("Add Item Canceled!");
+            
+        }        
+        Ui_AddItem.clearInput();
+    }
+    private void addItem(){  
         if(pc.connectionActive())
         {
             try{
@@ -362,12 +344,9 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         else{
             setText("Inventory is NOT loaded, no products can be found!");
         }
-            
-        clearProductInput();
     }
     public static void clearProductInput() {
-        productInput.setText("");
-        qtyInput.setText("1");
+        UIAddItem.clearInput();
     }
 
     public static void addItemToTable(SalesLineItem cart){

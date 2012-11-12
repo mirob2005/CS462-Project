@@ -25,6 +25,7 @@ public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
 
     public Ui_CheckDialog() { super(); }
 
+    @Override
     public void setupUi(QDialog Dialog)
     {
         Dialog.setObjectName("Dialog");

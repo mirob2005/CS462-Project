@@ -1,18 +1,13 @@
 package newgenpos;
 
 class Payment {        
-    private Money amount;
-    private boolean authorize;
+    private Money amount;    
 
     public Payment(Money Amount) {
-        this.amount = Amount;
-        this.authorize = false;
+        this.amount = Amount;        
     }
     public Money getAmount(){
         return this.amount;
-    }
-    public boolean authorized(){
-        return true;
     }
     public boolean isCash(){
         return false;
@@ -28,9 +23,6 @@ class CashPayment extends Payment {
     public CashPayment(Money Amount){
         super(Amount);
     }
-    public boolean authorized(){
-        return true;
-    }
     public boolean isCash(){
         return true;
     }
@@ -45,13 +37,6 @@ class CreditPayment extends Payment{
     public CreditPayment(Money Amount){
         super(Amount);
     }
-    public boolean authorized(){
-        //Open Dialog to enter Credit Card Information
-        //If info entered
-        return true;
-        //else
-        //return false;
-    }
     public boolean isCash(){
         return false;
     }
@@ -65,13 +50,6 @@ class CreditPayment extends Payment{
 class CheckPayment extends Payment{
     public CheckPayment(Money Amount){
         super(Amount);
-    }
-    public boolean authorized(){
-        //Open Dialog to enter Check Information
-        //If info entered
-        return true;
-        //else
-        //return false;
     }
     public boolean isCash(){
         return false;

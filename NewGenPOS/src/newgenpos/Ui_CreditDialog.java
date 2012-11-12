@@ -21,6 +21,7 @@ public class Ui_CreditDialog implements com.trolltech.qt.QUiForm<QDialog>
 
     public Ui_CreditDialog() { super(); }
 
+    @Override
     public void setupUi(QDialog Dialog)
     {
         Dialog.setObjectName("Dialog");

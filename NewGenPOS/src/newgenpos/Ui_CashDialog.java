@@ -14,6 +14,7 @@ public class Ui_CashDialog implements com.trolltech.qt.QUiForm<QDialog>
         super();        
     }
 
+    @Override
     public void setupUi(QDialog Dialog)
     {
         Dialog.setObjectName("Dialog");
