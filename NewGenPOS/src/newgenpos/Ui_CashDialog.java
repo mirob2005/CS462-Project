@@ -47,8 +47,8 @@ public class Ui_CashDialog implements com.trolltech.qt.QUiForm<QDialog>
         cashAmounLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Enter Cash Amount:", null));
     } // retranslateUi
     
-    public QLineEdit getInput(){
-        return this.cashAmountInput;
+    public String getInput(){
+        return this.cashAmountInput.text();
     }
 }
 

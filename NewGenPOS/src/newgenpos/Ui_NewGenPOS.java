@@ -238,17 +238,17 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font13.setWeight(75);
         label.setFont(font13);
         NewGenPOS.setCentralWidget(centralwidget);
-        QWidget.setTabOrder(cartTableView, cartScrollArea);
-        QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
-        QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);
-        QWidget.setTabOrder(itemDescrTextEdit, creditButton);
-        QWidget.setTabOrder(creditButton, cashButton);
-        QWidget.setTabOrder(cashButton, checkButton);
-        QWidget.setTabOrder(checkButton, productInput);        
+        QWidget.setTabOrder(itemDescrTextEdit, productInput);
         QWidget.setTabOrder(productInput, qtyInput);
         QWidget.setTabOrder(qtyInput, addItemButton);
+        QWidget.setTabOrder(addItemButton, creditButton);
+        QWidget.setTabOrder(creditButton, cashButton);
+        QWidget.setTabOrder(cashButton, checkButton);
+        QWidget.setTabOrder(checkButton, cartTableView);        
+        QWidget.setTabOrder(cartTableView, cartScrollArea);
+        QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
+        QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);        
         retranslateUi(NewGenPOS);
-
 
         //These send signals when these buttons are clicked        
         cashButton.clicked.connect(this,"on_cashButton_clicked()");
@@ -286,30 +286,29 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
     } // retranslateUi
     
-    public void on_cashButton_clicked(){        
+    private void on_cashButton_clicked(){        
         boolean success = register.makeCashPayment();
         if(success){
-            register.createReceipt();
-            register.endSale();
-            register.makeNewSale();
+            successfulTransaction();
         }
     }
-    public void on_creditButton_clicked(){  
-        boolean success = register.makeCashPayment();//Change to Credit
+    private void on_creditButton_clicked(){  
+        boolean success = register.makeCreditPayment();
         if(success){
-            register.createReceipt();
-            register.endSale();
-            register.makeNewSale();
+            successfulTransaction();
         }
     }
-    public void on_checkButton_clicked(){
-        boolean success = register.makeCashPayment();//Change to check
+    private void on_checkButton_clicked(){
+        boolean success = register.makeCheckPayment();
         if(success){
-            register.createReceipt();
-            register.endSale();
-            register.makeNewSale();
+            successfulTransaction();
         }
-    }    
+    }
+    private void successfulTransaction(){
+        register.createReceipt();
+        register.endSale();
+        register.makeNewSale();
+    }
     public static void clearCart() {
         model.clear();
         model.setHorizontalHeaderItem(0, new QStandardItem("Product ID"));
@@ -321,8 +320,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cartTableView.horizontalHeader().resizeSection(0,90);
         cartTableView.horizontalHeader().resizeSection(1,203);
         cartTableView.horizontalHeader().resizeSection(2,90);
-        cartTableView.horizontalHeader().resizeSection(3,45);
-        
+        cartTableView.horizontalHeader().resizeSection(3,45);        
     }
     public int getProductInput(){
         int productID = Integer.parseInt(productInput.text());

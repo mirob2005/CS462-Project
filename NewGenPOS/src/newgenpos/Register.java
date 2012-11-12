@@ -15,6 +15,9 @@ class Register {
     private String storeName;
     private Money paymentAmount;
     private Money total;
+    private String cardNumber;
+    private String checkNumber;
+    private String customerName;
     //Receipt Sections
     List<String> header;
     List<String> itemList;
@@ -87,9 +90,13 @@ class Register {
         }
         if(payment.isCredit()){
             this.footer.add("Payment Method\tCREDIT");
+            this.footer.add("Name:\t"+this.customerName+"\n");
+            this.footer.add("Card#:\t"+this.cardNumber);            
         }
         if(payment.isCheck()){
             this.footer.add("Payment Method\tCHECK");
+            this.footer.add("Name:\t"+this.customerName);
+            this.footer.add("Check#\t"+this.checkNumber+"\n");
         }
         this.footer.add("Payment Amount\t"+this.paymentAmount.getFormatted());
         Money cashBack = currentSale.getCashBack(); 
@@ -129,27 +136,13 @@ class Register {
         dialog.show();
 
         if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
-            String input = UICashdialog.getInput().text();
-                        
-            try{
-                Double paymentInput = Double.parseDouble(input);
-                this.paymentAmount = new Money(paymentInput);
-                //Ensure payment is >= the total
-                this.total = currentSale.getTotal();
-                if(this.paymentAmount.checkTotal(this.total)){
-                    Payment payment = new CashPayment(this.paymentAmount);
-                    this.makePayment(payment);
-                    return true;
-                }
-                else{
-                    Ui_NewGenPOS.setText("Insufficient Funds!");
-                    return false;
-                }
+            String input = UICashdialog.getInput();
+            boolean success = checkAmount(input);
+            if(success){
+                Payment payment = new CashPayment(this.paymentAmount);
+                this.makePayment(payment);
             }
-            catch(NumberFormatException e){
-                Ui_NewGenPOS.setText("Payment values must contain ONLY numbers! Try Again!");
-                return false;
-            }
+            return success;
         }
         else {
             Ui_NewGenPOS.setText("Payment Canceled!");
@@ -162,8 +155,29 @@ class Register {
         UICreditdialog.setupUi(dialog);
         dialog.setWindowTitle("Enter Credit Information:");
         dialog.show();
-        //FINISH THIS
-        return false;
+
+        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+            String inputAmount = UICreditdialog.getAmount();
+            String inputCardNumber = UICreditdialog.getCardNumber();
+            String inputYear = UICreditdialog.getYear();
+            String inputMonth = UICreditdialog.getMonth();
+            String inputName = UICreditdialog.getName();
+                        
+            boolean success;
+            success = (checkAmount(inputAmount)&&checkCardNumber(inputCardNumber)&&
+            checkEXP(inputMonth, inputYear)&&checkText(inputName));
+            
+            if(success){
+                Payment payment = new CreditPayment(this.paymentAmount);
+                this.makePayment(payment);
+                this.customerName = inputName;
+            }            
+            return success;
+        }
+        else {
+            Ui_NewGenPOS.setText("Payment Canceled!");
+            return false;
+        }
     }
     public boolean makeCheckPayment(){
         dialog = new QDialog();
@@ -171,10 +185,128 @@ class Register {
         UICheckdialog.setupUi(dialog);
         dialog.setWindowTitle("Enter Check Information:");
         dialog.show();
-        //FINISH THIS
-        return false;
+
+        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+            String inputAmount = UICheckdialog.getAmount();
+            String inputName = UICheckdialog.getName();
+            String inputAddr1 = UICheckdialog.getAddr1();
+            String inputAddr2 = UICheckdialog.getAddr2();
+            String inputCheckNumber = UICheckdialog.getCheckNumber();
+            String inputLicense = UICheckdialog.getLicense();
+            String inputPhone = UICheckdialog.getPhone();
+                                    
+            boolean success;
+            success = (checkAmount(inputAmount)&&checkText(inputName)&&checkText(inputAddr1)&&
+                    checkText(inputAddr2)&&checkCheckNumber(inputCheckNumber)&&
+                    checkLicense(inputLicense)&&checkPhone(inputPhone));
+            
+            if(success){
+                Payment payment = new CheckPayment(this.paymentAmount);
+                this.makePayment(payment);
+                this.customerName = inputName;
+                this.checkNumber = inputCheckNumber;
+            }            
+            return success;
+        }
+        else {
+            Ui_NewGenPOS.setText("Payment Canceled!");
+            return false;
+        }        
     }
     public ProductCatalog getProductCatalog(){
         return this.catalog;
+    }
+    private boolean checkAmount(String input){
+        try{
+            Double paymentInput = Double.parseDouble(input);
+            this.paymentAmount = new Money(paymentInput);
+            //Ensure payment is >= the total
+            this.total = currentSale.getTotal();
+            if(this.paymentAmount.checkTotal(this.total)){
+                return true;
+            }
+            else{
+                Ui_NewGenPOS.setText("Insufficient Funds!");
+                return false;
+            }
+        }
+        catch(NumberFormatException e){
+            Ui_NewGenPOS.setText("Payment amount must contain ONLY numbers and must NOT be blank! Try Again!");
+            return false;
+        }
+    }
+    private boolean checkCardNumber(String input){        
+        if(input.length() != 16){
+            Ui_NewGenPOS.setText("Card Number must be 16 numbers long! Try Again!");
+            return false;
+        }
+        try{
+            //Checking for only numbers            
+            long numberCheck = Long.parseLong(input);
+        }
+        catch(NumberFormatException e){
+            Ui_NewGenPOS.setText("Card Number must contain ONLY numbers! Try Again!");
+            return false;
+        }
+        this.cardNumber = "XXXXXXXXXXXX"+input.substring(12);
+        return true;
+    }
+    private boolean checkEXP(String month, String year){
+        if((month.length() != 2) || (year.length() != 2)){
+            Ui_NewGenPOS.setText("Year/Month EXP values must range from 01 to 12! Try Again!");
+            return false;
+        }
+        try{
+            //Checking for only numbers
+            int intCheck = Integer.parseInt(month);
+            intCheck = Integer.parseInt(year);
+        }
+        catch(NumberFormatException e){
+            Ui_NewGenPOS.setText("Year/Month EXP values must contain ONLY numbers! Try Again!");
+            return false;
+        }
+        return true;
+    }
+    private boolean checkText(String input){
+        if(input.isEmpty()){
+            Ui_NewGenPOS.setText("All fields must be non-empty!");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    private boolean checkCheckNumber(String input){
+        try{
+            //Checking for only numbers
+            long numberCheck = Long.parseLong(input);
+        }
+        catch(NumberFormatException e){
+            Ui_NewGenPOS.setText("Check number must contain ONLY numbers and must NOT be blank! Try Again!");
+            return false;
+        }
+        return true;        
+    }
+    private boolean checkLicense(String input){
+        if(input.length() != 8){
+            Ui_NewGenPOS.setText("License must be 8 characters long! Try Again!");
+            return false;
+        }
+        return true;
+    }
+    private boolean checkPhone(String input){
+        if(input.length() != 10){
+            Ui_NewGenPOS.setText("Phone number must be 10 numbers long! Try Again!");
+            return false;
+        }
+        try{
+            //Checking for only numbers
+            long numberCheck = Long.parseLong(input);
+        }
+        catch(NumberFormatException e){
+            Ui_NewGenPOS.setText("Phone number must contain ONLY numbers! Try Again!");
+            return false;
+        }
+        return true;
     }
 }

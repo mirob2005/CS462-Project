@@ -6,22 +6,22 @@ import com.trolltech.qt.gui.*;
 
 public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
 {
-    public QDialogButtonBox acceptanceBox;
-    public QLabel checkInformationLabel;
-    public QLabel nameLabel;
-    public QLabel addr1Label;
-    public QLineEdit nameInput;
-    public QLabel addr2Label;
-    public QLabel phoneLabel;
-    public QLabel licenseLabel;
-    public QLabel checkNumLabel;
-    public QLineEdit addr2Input;
-    public QLineEdit addr1Input;
-    public QLineEdit phoneInput;
-    public QLineEdit licenseInput;
-    public QLineEdit checkNumInput;
-    public QLineEdit amountInput;
-    public QLabel amountLabel;
+    private QDialogButtonBox acceptanceBox;
+    private QLabel checkInformationLabel;
+    private QLabel nameLabel;
+    private QLabel addr1Label;
+    private QLineEdit nameInput;
+    private QLabel addr2Label;
+    private QLabel phoneLabel;
+    private QLabel licenseLabel;
+    private QLabel checkNumLabel;
+    private QLineEdit addr2Input;
+    private QLineEdit addr1Input;
+    private QLineEdit phoneInput;
+    private QLineEdit licenseInput;
+    private QLineEdit checkNumInput;
+    private QLineEdit amountInput;
+    private QLabel amountLabel;
 
     public Ui_CheckDialog() { super(); }
 
@@ -91,6 +91,15 @@ public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
         amountLabel = new QLabel(Dialog);
         amountLabel.setObjectName("amountLabel");
         amountLabel.setGeometry(new QRect(40, 310, 130, 30));
+        
+        QDialog.setTabOrder(nameInput, addr1Input);
+        QDialog.setTabOrder(addr1Input,addr2Input);
+        QDialog.setTabOrder(addr2Input,phoneInput);
+        QDialog.setTabOrder(phoneInput,licenseInput);
+        QDialog.setTabOrder(licenseInput,checkNumInput);
+        QDialog.setTabOrder(checkNumInput,amountInput);
+        QDialog.setTabOrder(amountInput, acceptanceBox);
+        QDialog.setTabOrder(acceptanceBox, nameInput );
         retranslateUi(Dialog);
         acceptanceBox.accepted.connect(Dialog, "accept()");
         acceptanceBox.rejected.connect(Dialog, "reject()");
@@ -98,7 +107,7 @@ public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
         Dialog.connectSlotsByName();
     } // setupUi
 
-    void retranslateUi(QDialog Dialog)
+    private void retranslateUi(QDialog Dialog)
     {
         Dialog.setWindowTitle(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Dialog", null));
         checkInformationLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Enter Check Information:", null));
@@ -110,26 +119,26 @@ public class Ui_CheckDialog implements com.trolltech.qt.QUiForm<QDialog>
         checkNumLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Check #:", null));
         amountLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("Dialog", "Amount:", null));
     } // retranslateUi
-    public QLineEdit getAddr1(){
-        return this.addr1Input;
+    public String getAddr1(){
+        return this.addr1Input.text();
     }
-    public QLineEdit getAddr2(){
-        return this.addr2Input;
+    public String getAddr2(){
+        return this.addr2Input.text();
     }
-    public QLineEdit getAmount(){
-        return this.amountInput;
+    public String getAmount(){
+        return this.amountInput.text();
     }
-    public QLineEdit getCheckNumber(){
-        return this.checkNumInput;
+    public String getCheckNumber(){
+        return this.checkNumInput.text();
     }
-    public QLineEdit getLicense(){
-        return this.licenseInput;
+    public String getLicense(){
+        return this.licenseInput.text();
     }
-    public QLineEdit getName(){
-        return this.nameInput;
+    public String getName(){
+        return this.nameInput.text();
     }
-    public QLineEdit getPhone(){
-        return this.phoneInput;
+    public String getPhone(){
+        return this.phoneInput.text();
     }    
 }
 
