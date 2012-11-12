@@ -14,7 +14,7 @@ public class ProductCatalog {
 
         } catch (Exception e) {
             System.out.println("Database Not Connected, Product IDs will not be found!");
-        } 
+        }
     }
     
     public ProductDescription getProductDescription(ItemID ItemID, int qty)throws SQLException{
@@ -53,7 +53,20 @@ public class ProductCatalog {
         }
         return description;
     }
-    
+    public int getSalesNumber()throws SQLException{
+        int salesNumber = 0;
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT salesNumber FROM newgenpos.Sales order by salesNumber desc limit 1");
+        
+        if(rs.first() == false){
+            salesNumber = 1;
+        }
+        else{
+            salesNumber = rs.getInt("salesNumber");
+            salesNumber++;
+        }
+        return salesNumber;
+    }
     public boolean connectionActive(){
         if(con != null){
             return true;

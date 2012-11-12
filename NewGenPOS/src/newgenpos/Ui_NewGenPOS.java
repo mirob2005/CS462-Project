@@ -286,26 +286,27 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
     } // retranslateUi
     
-    private void on_cashButton_clicked(){        
+    private void on_cashButton_clicked()throws SQLException{        
         boolean success = register.makeCashPayment();
         if(success){
             successfulTransaction();
         }
     }
-    private void on_creditButton_clicked(){  
+    private void on_creditButton_clicked()throws SQLException{  
         boolean success = register.makeCreditPayment();
         if(success){
             successfulTransaction();
         }
     }
-    private void on_checkButton_clicked(){
+    private void on_checkButton_clicked()throws SQLException{
         boolean success = register.makeCheckPayment();
         if(success){
             successfulTransaction();
         }
     }
-    private void successfulTransaction(){
+    private void successfulTransaction()throws SQLException{
         register.createReceipt();
+        register.recordSale();                  
         register.endSale();
         register.makeNewSale();
     }

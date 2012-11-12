@@ -1,13 +1,18 @@
 package newgenpos;
 
 import com.trolltech.qt.gui.QDialog;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 class Register {
     private ProductCatalog catalog;
     private Sale currentSale;
+    private int currentSalesNumber;
     private ProductDescription description;
     private List<SalesLineItem> cart;
     private int storeID;
@@ -30,18 +35,20 @@ class Register {
     private Ui_CheckDialog UICheckdialog;
     
     
-    public Register(ProductCatalog pc, int id, String addr, String name){
+    public Register(int salesNumber, ProductCatalog pc, int id, String addr, String name){
         this.catalog = pc;
         this.storeID = id;
         this.storeAddr = addr;
         this.storeName = name;
+        this.currentSalesNumber = salesNumber;
     }
     public void endSale(){
         currentSale.becomeComplete();
         Ui_NewGenPOS.setText("Thank You for Shopping!"); 
         Ui_NewGenPOS.setDisplay(0);
         Ui_NewGenPOS.clearProductInput();
-        Ui_NewGenPOS.clearCart();        
+        Ui_NewGenPOS.clearCart();
+        this.currentSalesNumber = this.currentSalesNumber+1;
     }
     public void enterItem(ItemID ItemID, int qty)throws SQLException{
         description = catalog.getProductDescription(ItemID, qty);
@@ -64,13 +71,13 @@ class Register {
         this.header.add(this.storeAddr);
         this.header.add("-----------------------------------------------");
         this.header.add("Sale made at "+ currentSale.getDate());
-        this.header.add("Sale #__");
+        this.header.add("Sale #"+this.currentSalesNumber);
         this.header.add("-----------------------------------------------\n");
         
         for(int i =0; i<cart.size();i++){
             SalesLineItem item = cart.get(i);
             ProductDescription product = item.getDescription();
-            itemList.add(item.getQty()+"\t"+product.getDescription()+"\t"+product.getPrice().getFormatted());
+            this.itemList.add(item.getQty()+"\t"+product.getDescription()+"\t"+product.getPrice().getFormatted());
         }
         
         Money subTotal = currentSale.getSubTotal();
@@ -308,5 +315,56 @@ class Register {
             return false;
         }
         return true;
+    }
+    public void recordSale()throws SQLException{
+        Connection con = null;
+        
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
+
+            Statement st = con.createStatement();
+            String paymentMethod = "";
+            String cartList = "";
+            
+            Payment payment = currentSale.getPayment();
+            if(payment.isCash()){
+                paymentMethod = "CASH";
+            }
+            if(payment.isCredit()){
+                paymentMethod = "CREDIT: "+this.customerName+", CARD#"+this.cardNumber;
+            }
+            if(payment.isCheck()){
+                paymentMethod = "CHECK: "+this.customerName+", CHECK#"+this.checkNumber;
+            }
+            
+            for(int i =0; i<cart.size();i++){
+                SalesLineItem item = cart.get(i);
+                ProductDescription product = item.getDescription();
+                int qty = item.getQty();
+                String qtyString = "";
+                if(qty<10){
+                    qtyString += "0"+qty;
+                }
+                else{
+                    qtyString += qty;
+                }
+                ItemID currentItemID = product.getItemID();
+                String currentItemString = ""+currentItemID.getINT();
+                cartList+=qtyString+currentItemString+",";
+            }            
+            String totalString = this.total.getFormatted();
+            totalString = totalString.substring(1);
+            double totalAmount = Double.parseDouble(totalString);
+            String insert = "INSERT INTO Sales (salesNumber, date, total, paymentMethod, items) VALUES ("+this.currentSalesNumber+", '"+currentSale.getDate()+ "', "+ totalAmount+", '"+paymentMethod+"', '"+cartList+"')";            
+            st.executeUpdate(insert);   
+ 
+        } catch (Exception e) {
+            e.printStackTrace();            
+        } finally {
+            if(con != null) {
+                con.close();
+            }            
+        }        
     }
 }

@@ -18,15 +18,17 @@ public class Store {
             catalog = new ProductCatalog();
         } catch (Exception e) {
             System.out.println("Database Not Connected, Product IDs will not be found!");
-        } 
-        
-        register = new Register(this.catalog, this.storeID, this.address, this.name);        
+        }
+        int salesNumber = 1;
+        try{
+            salesNumber = catalog.getSalesNumber();
+        } catch (Exception e) {
+            System.out.println("Database Not Connected, Sales cannot be recorded!");
+        }         
+        register = new Register(salesNumber, this.catalog, this.storeID, this.address, this.name);        
     }
     
     public Register getRegister(){
         return register;
-    }    
-    public void addCompleteSale(Sale SaleID){
-        //Add to a completed sales database
     }
 }
