@@ -6,7 +6,7 @@ import java.util.List;
 
 class Sale {
     private boolean isComplete;
-    private Date time;    
+    private Date time;
     private SalesLineItem item;
     private List<SalesLineItem> cart = new ArrayList<>();
     private Payment payment;
