@@ -1,3 +1,4 @@
+CREATE SCHEMA `NewGenPOS`;
 CREATE  TABLE `newgenpos`.`Inventory` (
   `itemID` INT UNSIGNED NOT NULL ,
   `description` VARCHAR(255) NOT NULL ,

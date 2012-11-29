@@ -110,7 +110,7 @@ class Register {
         }
         this.footer.add("Payment Amount\t"+this.paymentAmount.getFormatted());
         Money cashBack = currentSale.getCashBack(); 
-        this.footer.add("Amount Back\t"+cashBack.getFormatted());
+        this.footer.add("Amount Back\t\t"+cashBack.getFormatted());
         
         this.printReceipt();
     }
