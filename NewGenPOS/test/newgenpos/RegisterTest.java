@@ -202,8 +202,8 @@ public class RegisterTest {
         }
         return true;
     }
-    /*
-     * Main testing
+    /**
+     * Test of makeCashPayment method, of class Register.
      */
     @Test
     public void testMakeCashPayment() {
@@ -216,7 +216,9 @@ public class RegisterTest {
             System.out.println("Test case passed for makeCashPayment");
         }
     }
-
+    /**
+     * Test of makeCreditPayment method, of class Register.
+     */
     @Test
     public void testMakeCreditPayment() {
         System.out.println("Testing Method: makeCreditPayment");
