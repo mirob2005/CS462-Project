@@ -101,6 +101,9 @@ public class RegisterTest {
             result = false;
         return result;
     }
+    /*
+     * Supporting methods
+     */
     private boolean checkCardNumber(String input){        
         if(input.length() != 16){
             return false;
