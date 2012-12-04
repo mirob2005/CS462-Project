@@ -37,4 +37,12 @@ class Money {
             return false;
         }
     }
+    public boolean checkEquals(Money amount){
+        if(this.price == amount.price){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
