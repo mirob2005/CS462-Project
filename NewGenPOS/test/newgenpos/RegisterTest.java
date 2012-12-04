@@ -202,7 +202,9 @@ public class RegisterTest {
         }
         return true;
     }
-    
+    /*
+     * Main testing
+     */
     @Test
     public void testMakeCashPayment() {
         System.out.println("Testing Method: makeCashPayment");
