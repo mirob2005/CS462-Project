@@ -13,13 +13,14 @@ class Sale {
     private Money subTotal;
     private Money total;
     private Money cashBack;
-    private double tax = 1.08;
+    private Pricing pricing;
        
     public Sale(){
         this.isComplete = false;
         this.time = new Date();
         this.subTotal = new Money(0);
         this.total = new Money(0);
+        this.pricing = new Pricing();
     }
     
     public boolean isComplete(){
@@ -55,7 +56,9 @@ class Sale {
         }       
     }
     public void calcTotal(){
-        this.total = this.subTotal.calcTotal(tax);            
+        Pricing.IPricingStrategy strategy = new Pricing.StandardPricing();        
+        pricing.setPricingStrategy(strategy);
+        this.total = pricing.calcTotal(this.subTotal);
     }
     public List<SalesLineItem> getCart(){
         return this.cart;
