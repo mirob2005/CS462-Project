@@ -25,7 +25,7 @@ public class Store {
         } catch (Exception e) {
             System.out.println("Database Not Connected, Sales cannot be recorded!");
         }         
-        register = new Register(salesNumber, this.catalog, this.storeID, this.address, this.name);        
+        register = Register.getRegister(salesNumber, this.catalog, this.storeID, this.address, this.name);        
     }
     
     public Register getRegister(){

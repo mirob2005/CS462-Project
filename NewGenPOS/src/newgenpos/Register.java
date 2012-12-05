@@ -34,16 +34,24 @@ class Register {
     private Ui_ReceiptDialog UIReceiptdialog;
     
     private verifyPaymentAdapter adapter = new verifyPaymentAdapter();
-    //private guiWidgetHandler guiHandler;
     
+    private static Register theInstance = null;
     
-    public Register(int salesNumber, ProductCatalog pc, int id, String addr, String name){
+    private Register(int salesNumber, ProductCatalog pc, int id, String addr, String name){
         this.catalog = pc;
         this.storeID = id;
         this.storeAddr = addr;
         this.storeName = name;
         this.currentSalesNumber = salesNumber;
     }
+    //HW5.1 Singleton Design Pattern
+    public static Register getRegister(int salesNumber, ProductCatalog pc, int id, String addr, String name){
+        if(theInstance == null){
+            theInstance = new Register(salesNumber, pc, id, addr, name);
+        }
+        return theInstance;     
+    }
+    
     public void endSale(){
         currentSale.becomeComplete();
         Ui_NewGenPOS.setText("Thank You for Shopping!"); 

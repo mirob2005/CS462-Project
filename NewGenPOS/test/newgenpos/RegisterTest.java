@@ -45,7 +45,7 @@ public class RegisterTest {
      */
     @Test
     public void test1MakeCashPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         System.out.println("Testing Method: Register.makeCashPayment");
@@ -59,7 +59,7 @@ public class RegisterTest {
     }
     @Test
     public void test2MakeCashPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -84,7 +84,7 @@ public class RegisterTest {
      */
     @Test
     public void test1MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -108,7 +108,7 @@ public class RegisterTest {
     }
     @Test
     public void test2MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -133,7 +133,7 @@ public class RegisterTest {
     }    
     @Test
     public void test3MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -158,7 +158,7 @@ public class RegisterTest {
     }    
     @Test
     public void test4MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -183,7 +183,7 @@ public class RegisterTest {
     }    
     @Test
     public void test5MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -208,7 +208,7 @@ public class RegisterTest {
     }
     @Test
     public void test6MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -233,7 +233,7 @@ public class RegisterTest {
     }   
     @Test
     public void test7MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -258,7 +258,7 @@ public class RegisterTest {
     }       
     @Test
     public void test8MakeCreditPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -287,7 +287,7 @@ public class RegisterTest {
      */
     @Test
     public void test1MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -313,7 +313,7 @@ public class RegisterTest {
     }
     @Test
     public void test2MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -340,7 +340,7 @@ public class RegisterTest {
     }
     @Test
     public void test3MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -367,7 +367,7 @@ public class RegisterTest {
     }
     @Test
     public void test4MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -394,7 +394,7 @@ public class RegisterTest {
     }
     @Test
     public void test5MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -421,7 +421,7 @@ public class RegisterTest {
     }
     @Test
     public void test6MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
@@ -448,7 +448,7 @@ public class RegisterTest {
     }
     @Test
     public void test7MakeCheckPayment() {
-        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        Register instance = Register.getRegister(salesNumber, catalog, storeID, address, name);                        
         instance.makeNewSale();
         Sale currentSale = instance.getCurrentSale(); 
         
