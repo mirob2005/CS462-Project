@@ -75,4 +75,8 @@ class Sale {
     public Payment getPayment(){
         return this.payment;
     }
+    //For Testing ONLY!
+    public void setTotal(Money amount){
+        this.total = amount;
+    }            
 }

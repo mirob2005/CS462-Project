@@ -1,40 +1,30 @@
 /*
- * HW5, Testing on Cash, Credit, Check payment
+ * HW5.2 Tests of Register.makeCashPayment, Register.makeCreditPayment, Register.makeCheckPayment
  */
 package newgenpos;
 
-import com.trolltech.qt.gui.QDialog;
-import java.util.Date;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
 
-/**
- *
- * @author Willy 2
- */
-public class RegisterTest {
+public class RegisterTest {  
     private int salesNumber = 1;
     private String address = "testAddress";
     private String name = "testName";
-    private ProductCatalog catalog;
-    private int storeID = 1;
-    
-    private String cardNumber;
-    private Register register; 
-    private Date time;
-    private Money paymentAmount;
-    private Money total = new Money(5.00);
+    private ProductCatalog catalog;    
+    private int storeID = 1;                
     
     public RegisterTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
-        
     }
     
     @AfterClass
@@ -43,209 +33,309 @@ public class RegisterTest {
     
     @Before
     public void setUp() {
-        this.register = new Register(salesNumber, this.catalog, this.storeID, this.address, this.name);        
+       
     }
     
     @After
     public void tearDown() {
     }
-/*
- * makeCashPayment, makeCreditPayment, and makeCheckPayment
- */
-    public boolean makeCashPayment(){        
-        boolean result = false;
-        String input = "10.00";
-        boolean success = checkAmount(input);
-        if(success)
-            result = true;
-        else 
-            result = false;
-        return  result;     
-    }
-    public boolean makeCreditPayment(){
-        boolean result = false;
-        String inputAmount = "1000.00";
-        String inputCardNumber = "1234123456785678";
-        String inputYear = "13";
-        String inputMonth = "09";
-        String inputName = "Steve";
-        boolean success;
-            success = (checkAmount(inputAmount)&&checkCardNumber(inputCardNumber)&&
-            checkEXP(inputMonth, inputYear)&&checkText(inputName));
-        if(success)
-            result = true;
-        else
-            result = false;
-        return result;
-    }
-    private boolean makeCheckPayment() {
-        boolean result = false;
-        /*
-         * inputAmount is actually less then total owed, so this case will fail
-         */
-        String inputAmount = "4.00";
-        String inputName = "Steve";
-        String inputAddr1 = "123 Fullerton St.";
-        String inputAddr2 = "Fullerton, CA";
-        String inputCheckNumber = "123";
-        String inputLicense = "D1234321";
-        String inputPhone = "7141234563";
-        
-        boolean success;
-        success = (checkAmount(inputAmount)&&checkText(inputName)&&checkText(inputAddr1)&&
-                    checkText(inputAddr2)&&checkCheckNumber(inputCheckNumber)&&
-                    checkLicense(inputLicense)&&checkPhone(inputPhone));
-        if(success)
-            result = true;
-        else
-            result = false;
-        return result;
-    }
-    /*
-     * Supporting methods
-     */
-    private boolean checkCardNumber(String input){        
-        if(input.length() != 16){
-            return false;
-        }
-        try{
-            //Checking for only numbers            
-            long numberCheck = Long.parseLong(input);
-        }
-        catch(NumberFormatException e){
-            return false;
-        }
-        this.cardNumber = "XXXXXXXXXXXX"+input.substring(12);
-        return true;
-    }
-    private boolean checkEXP(String month, String year){
-        int intMonth;
-        int intYear;
-        time = new Date();
-        //Subtracts current year by 1900 by default, changing to 2000
-        int currentYear = time.getYear()-100;
-        //Ranges from 01 to 12 instead of 00 to 11
-        int currentMonth = time.getMonth()+1;                
-        
-        if((month.length() != 2) || (year.length() != 2)){
-            return false;
-        }
-        try{
-            //Checking for only numbers
-            intMonth = Integer.parseInt(month);
-            intYear = Integer.parseInt(year);
-        }
-        catch(NumberFormatException e){
-            return false;
-        }
-        if(intMonth<1 || intMonth > 12){
-            return false;
-        }
-        if(intYear < currentYear || intYear > currentYear+10){
-            return false;            
-        }
-        if(intYear == currentYear && intMonth < currentMonth){
-            return false;             
-        }
-        return true;
-    }
-    private boolean checkText(String input){
-        if(input.isEmpty()){
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-    private boolean checkAmount(String input){
-        try{
-            Double paymentInput = Double.parseDouble(input);
-            this.paymentAmount = new Money(paymentInput);
-            //Ensure payment is >= the total
-            if(this.paymentAmount.checkTotal(this.total)){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        catch(NumberFormatException e){
-            return false;
-        }
-    }
-    private boolean checkCheckNumber(String input){
-        try{
-            //Checking for only numbers
-            long numberCheck = Long.parseLong(input);
-        }
-        catch(NumberFormatException e){
-            return false;
-        }
-        return true;        
-    }
-    private boolean checkLicense(String input){
-        if(input.length() != 8){
-            return false;
-        }
-        return true;
-    }
-    private boolean checkPhone(String input){
-        if(input.length() != 10){
-            return false;
-        }
-        try{
-            //Checking for only numbers
-            long numberCheck = Long.parseLong(input);
-        }
-        catch(NumberFormatException e){
-            return false;
-        }
-        return true;
-    }
+
     /**
      * Test of makeCashPayment method, of class Register.
      */
     @Test
-    public void testMakeCashPayment() {
-        System.out.println("Testing Method: makeCashPayment");
+    public void test1MakeCashPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        System.out.println("Testing Method: Register.makeCashPayment");
+        String input = "10.00";
+        
+        currentSale.setTotal(new Money(1.99));
         boolean expResult = true;
-        boolean result = makeCashPayment();
+        boolean result = instance.makeCashPayment(input);
         assertEquals(expResult, result);
-        if(expResult == result)
-        {
-            System.out.println("Test case passed for makeCashPayment");
-        }
+        System.out.println("Test 1 of Register.makeCashPayment passed!");
     }
+    @Test
+    public void test2MakeCashPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCashPayment");
+        //Insufficient Funds!
+        String input = "1.00";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCashPayment(input);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }
+        assertEquals(expResult, result);
+        System.out.println("Test 2 of Register.makeCashPayment passed!");
+    }    
+
     /**
      * Test of makeCreditPayment method, of class Register.
      */
     @Test
-    public void testMakeCreditPayment() {
-        System.out.println("Testing Method: makeCreditPayment");
+    public void test1MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");
+        String inputAmount = "2";
+        String inputCardNumber = "2222222222222222";
+        String inputYear = "12";
+        String inputMonth = "12";
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
         boolean expResult = true;
-        boolean result = makeCreditPayment();
-        assertEquals(expResult, result);
-        if(expResult == result)
-        {
-            System.out.println("Test case passed for makeCreditPayment");
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
         }
+        assertEquals(expResult, result);
+        System.out.println("Test 1 of Register.makeCreditPayment passed!");
     }
+    @Test
+    public void test2MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");
+        String inputAmount = "2";
+        //Card Number is too short
+        String inputCardNumber = "22222222222222";
+        String inputYear = "12";
+        String inputMonth = "12";
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }
+        assertEquals(expResult, result);
+        System.out.println("Test 2 of Register.makeCreditPayment passed!");
+    }    
+    @Test
+    public void test3MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");
+        //Insufficient Funds!
+        String inputAmount = "1";        
+        String inputCardNumber = "2222222222222222";
+        String inputYear = "12";
+        String inputMonth = "12";
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 3 of Register.makeCreditPayment passed!");
+    }    
+    @Test
+    public void test4MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");        
+        String inputAmount = "2";        
+        String inputCardNumber = "2222222222222222";
+        //Expired Card!
+        String inputYear = "11";
+        String inputMonth = "12";
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 4 of Register.makeCreditPayment passed!");
+    }    
+    @Test
+    public void test5MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");        
+        String inputAmount = "2";        
+        String inputCardNumber = "2222222222222222";        
+        String inputYear = "12";
+        //Month not between 01-12
+        String inputMonth = "2";
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 5 of Register.makeCreditPayment passed!");
+    }
+    @Test
+    public void test6MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");        
+        String inputAmount = "2";        
+        String inputCardNumber = "2222222222222222";        
+        String inputYear = "12";        
+        String inputMonth = "12";
+        //Blank Name!
+        String inputName = "";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 6 of Register.makeCreditPayment passed!");
+    }   
+    @Test
+    public void test7MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");        
+        String inputAmount = "2";        
+        String inputCardNumber = "2222222222222222";        
+        //Year not between 01-12
+        String inputYear = "2";        
+        String inputMonth = "12";        
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 7 of Register.makeCreditPayment passed!");
+    }       
+    @Test
+    public void test8MakeCreditPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCreditPayment");        
+        String inputAmount = "2";        
+        String inputCardNumber = "2222222222222222";                
+        String inputYear = "12";        
+        //Card is expired!
+        String inputMonth = "10";        
+        String inputName = "Name";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 8 of Register.makeCreditPayment passed!");
+    }     
 
     /**
      * Test of makeCheckPayment method, of class Register.
      */
     @Test
-    public void testMakeCheckPayment() {
-        System.out.println("Testing Method: makeCheckPayment");
-        /*
-         * inputAmount is actually less then total owed, so this case will fail
-         */
-        boolean expResult = false;
-        boolean result = makeCheckPayment();
+    public void test1MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        String inputName = "Name";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        String inputCheckNumber = "1";
+        String inputLicense = "22222222";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = true;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
         assertEquals(expResult, result);
-        if(expResult == result)
-        {
-            System.out.println("Test case passed for makeCreditPayment");
-        }
+        System.out.println("Test 1 of Register.makeCheckPayment passed!");
     }
+    @Test
+    public void test2MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        //Name is blank!
+        String inputName = "";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        String inputCheckNumber = "1";
+        String inputLicense = "22222222";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 2 of Register.makeCheckPayment passed!");
+    }    
 }

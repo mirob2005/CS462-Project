@@ -16,6 +16,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private static Register register;
     private QDialog dialog;
     private static Ui_AddItem UIAddItem;
+    private guiWidgetHandler widgetHandler;
     
     private QWidget centralwidget;
     private QPushButton addItemButton;
@@ -46,6 +47,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         register = Main.getRegister();
         pc = register.getProductCatalog();
         register.makeNewSale();
+        widgetHandler = new guiWidgetHandler();
     }
 
     @Override
@@ -250,29 +252,14 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
     } // retranslateUi
     
-    private void on_cashButton_clicked()throws SQLException{        
-        boolean success = register.makeCashPayment();
-        if(success){
-            successfulTransaction();
-        }
+    private void on_cashButton_clicked(){
+        widgetHandler.on_cashButton_clicked(register);
     }
     private void on_creditButton_clicked()throws SQLException{  
-        boolean success = register.makeCreditPayment();
-        if(success){
-            successfulTransaction();
-        }
+        widgetHandler.on_creditButton_clicked(register);
     }
     private void on_checkButton_clicked()throws SQLException{
-        boolean success = register.makeCheckPayment();
-        if(success){
-            successfulTransaction();
-        }
-    }
-    private void successfulTransaction()throws SQLException{
-        register.createReceipt();
-        register.recordSale();                  
-        register.endSale();
-        register.makeNewSale();
+        widgetHandler.on_checkButton_clicked(register);
     }
     public static void clearCart() {
         model.clear();

@@ -40,7 +40,7 @@ public class SaleTest {
         this.testProductPrice = new Money(9.99);
         this.testProductStock = 99;
         this.testProductDesc = new ProductDescription(this.testProductItemID,
-                this.testProductName, this.testProductPrice, this.testProductStock);
+        this.testProductName, this.testProductPrice, this.testProductStock);
     }
     
     @After
