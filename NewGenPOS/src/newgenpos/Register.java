@@ -32,10 +32,6 @@ class Register {
     List<String> footer;
     private QDialog dialog;
     private Ui_ReceiptDialog UIReceiptdialog;
-    //Payment Dialogs
-    private Ui_CashDialog UICashdialog;
-    private Ui_CreditDialog UICreditdialog;
-    private Ui_CheckDialog UICheckdialog;
     
     private verifyPaymentAdapter adapter = new verifyPaymentAdapter();
     

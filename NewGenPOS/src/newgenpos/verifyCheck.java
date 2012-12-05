@@ -15,12 +15,21 @@ public class verifyCheck {
         }
     }
     public boolean verifyCheckNumber(String input){
+        if(input.contains(".")){
+            Ui_NewGenPOS.setText("Check numbers must be positive integers! Try Again!");
+            return false;
+        }
+        long numberCheck;
         try{
             //Checking for only numbers
-            long numberCheck = Long.parseLong(input);
+            numberCheck = Long.parseLong(input);
         }
         catch(NumberFormatException e){
             Ui_NewGenPOS.setText("Check number must contain ONLY numbers and must NOT be blank! Try Again!");
+            return false;
+        }
+        if(numberCheck < 0){
+            Ui_NewGenPOS.setText("Check numbers must be positive integers! Try Again!");
             return false;
         }
         return true;        
