@@ -337,5 +337,140 @@ public class RegisterTest {
         }        
         assertEquals(expResult, result);
         System.out.println("Test 2 of Register.makeCheckPayment passed!");
-    }    
+    }
+    @Test
+    public void test3MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        String inputName = "Name";
+        //Address is blank!
+        String inputAddr1 = "";
+        String inputAddr2 = "";
+        String inputCheckNumber = "1";
+        String inputLicense = "22222222";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 3 of Register.makeCheckPayment passed!");
+    }
+    @Test
+    public void test4MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        String inputName = "Name";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        //check number is invliad value is blank!
+        String inputCheckNumber = "-11";
+        String inputLicense = "22222222";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 4 of Register.makeCheckPayment passed!");
+    }
+    @Test
+    public void test5MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        String inputName = "Name";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        String inputCheckNumber = "1";
+        //License is invalid entry
+        String inputLicense = "asdf";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 5 of Register.makeCheckPayment passed!");
+    }
+    @Test
+    public void test6MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        String inputAmount = "2";
+        String inputName = "Name";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        String inputCheckNumber = "1";
+        String inputLicense = "22222222";
+        //invalid entry of phone number
+        String inputPhone = "14sg46gha";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 6 of Register.makeCheckPayment passed!");
+    }
+    @Test
+    public void test7MakeCheckPayment() {
+        Register instance = new Register(salesNumber, catalog, storeID, address, name);                        
+        instance.makeNewSale();
+        Sale currentSale = instance.getCurrentSale(); 
+        
+        System.out.println("Testing Method: Register.makeCheckPayment");
+        //insufficient funds!
+        String inputAmount = "1";
+        String inputName = "Name";
+        String inputAddr1 = "Addr1";
+        String inputAddr2 = "Addr2";
+        String inputCheckNumber = "1";
+        String inputLicense = "22222222";
+        String inputPhone = "7145552727";
+        
+        currentSale.setTotal(new Money(1.99));
+        boolean expResult = false;
+        boolean result;
+        try{
+            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+        }catch(NullPointerException e){ //Catch gui unavailable error
+            result = false;
+        }        
+        assertEquals(expResult, result);
+        System.out.println("Test 7 of Register.makeCheckPayment passed!");
+    }
 }
