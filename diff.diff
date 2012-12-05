@@ -1,0 +1,99 @@
+diff --git a/NewGenPOS/src/newgenpos/Register.java b/NewGenPOS/src/newgenpos/Register.java
+index 93aa6ef..46763e2 100644
+--- a/NewGenPOS/src/newgenpos/Register.java
++++ b/NewGenPOS/src/newgenpos/Register.java
+@@ -10,8 +10,10 @@ import java.util.ArrayList;
+ import java.util.Calendar;
+ import java.util.Date;
+ import java.util.List;
++import java.util.Observable;
++import java.util.Observer;
+ 
+-class Register {
++class Register implements Observer{
+     private ProductCatalog catalog;
+     private Sale currentSale;
+     private int currentSalesNumber;
+@@ -138,26 +140,9 @@ class Register {
+     public void makePayment(Payment paymentAmount){
+         currentSale.makePayment(paymentAmount);
+     }
+-    public boolean makeCashPayment(){        
+-        dialog = new QDialog();
+-        UICashdialog = new Ui_CashDialog();
+-        UICashdialog.setupUi(dialog);
+-        dialog.setWindowTitle("Enter Cash Amount:");
+-        dialog.show();
+-
+-        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+-            String input = UICashdialog.getInput();
+-            boolean success = checkAmount(input);
+-            if(success){
+-                Payment payment = new CashPayment(this.paymentAmount);
+-                this.makePayment(payment);
+-            }
+-            return success;
+-        }
+-        else {
+-            Ui_NewGenPOS.setText("Payment Canceled!");
+-            return false;
+-        }        
++    public void makeCashPayment(){        
++        Payment payment = new CashPayment(this.paymentAmount);
++        this.makePayment(payment);
+     }
+     public boolean makeCreditPayment(){
+         dialog = new QDialog();
+@@ -226,7 +211,7 @@ class Register {
+     public ProductCatalog getProductCatalog(){
+         return this.catalog;
+     }
+-    private boolean checkAmount(String input){
++    public boolean checkAmount(String input){
+         try{
+             Double paymentInput = Double.parseDouble(input);
+             this.paymentAmount = new Money(paymentInput);
+@@ -390,4 +375,9 @@ class Register {
+             }            
+         }        
+     }
++
++    @Override
++    public void update(Observable o, Object arg) {
++        throw new UnsupportedOperationException("Not supported yet.");
++    }
+ }
+diff --git a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
+index 29b632a..5c1c2c2 100644
+--- a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
++++ b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
+@@ -17,6 +17,10 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+     private QDialog dialog;
+     private static Ui_AddItem UIAddItem;
+     
++    private Ui_CashDialog UICashdialog;
++    private Ui_CreditDialog UICreditdialog;
++    private Ui_CheckDialog UICheckdialog;
++    
+     private QWidget centralwidget;
+     private QPushButton addItemButton;
+     private QFrame line;
+@@ -250,11 +254,13 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
+     } // retranslateUi
+     
+-    private void on_cashButton_clicked()throws SQLException{        
+-        boolean success = register.makeCashPayment();
+-        if(success){
+-            successfulTransaction();
+-        }
++    private void on_cashButton_clicked()throws SQLException{
++        Observable obs = new guiWidgetHandler();
++        obs.registerObserver(register);
++        guiWidgetHandler widgetManager = new guiWidgetHandler();
++        
++        widgetManager.cashButtonClicked();
++        register.update(obs, obs);
+     }
+     private void on_creditButton_clicked()throws SQLException{  
+         boolean success = register.makeCreditPayment();
