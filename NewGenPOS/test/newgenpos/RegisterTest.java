@@ -376,7 +376,7 @@ public class RegisterTest {
         String inputName = "Name";
         String inputAddr1 = "Addr1";
         String inputAddr2 = "Addr2";
-        //check number is invliad value is blank!
+        //invalid entry of check number
         String inputCheckNumber = "-11";
         String inputLicense = "22222222";
         String inputPhone = "7145552727";
@@ -404,7 +404,7 @@ public class RegisterTest {
         String inputAddr1 = "Addr1";
         String inputAddr2 = "Addr2";
         String inputCheckNumber = "1";
-        //License is invalid entry
+        //invalid entry of License number
         String inputLicense = "asdf";
         String inputPhone = "7145552727";
         
