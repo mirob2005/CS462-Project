@@ -53,11 +53,11 @@ public class Ui_NewGenPOSTest {
     }
     @Test
     public void testDisplayPriceShouldFail() {
-        System.out.println("Adding 3 items at $5.40 each - Test should fail");
+        System.out.println("Adding 3 items at $5.40 each - Test should pass");
        
         addItem(3);
         
         double total = displayPrice();
-        assert(total==11.75); //Total should be 17.49
+        assert(!(total==11.75)); //Total should be 17.49
     }
 }

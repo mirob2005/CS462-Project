@@ -10,5 +10,4 @@ public interface IVerifyPayment {
             String phone);
     public boolean verifyPayment(Money payment, Money total, String name, 
             String cardNumber, String month, String year);
-
 }

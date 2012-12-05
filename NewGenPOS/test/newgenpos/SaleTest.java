@@ -51,7 +51,7 @@ public class SaleTest {
      * Test of calcSubTotal method, of class Sale.
      */
     @Test
-    public void testCalcSubTotal() {
+    public void test1CalcSubTotal() {
         System.out.println("Testing Method: Sale.calcSubTotal");
         int qty = 5;
         SalesLineItem item = new SalesLineItem(this.testProductDesc,qty);        
@@ -60,5 +60,19 @@ public class SaleTest {
         //Subtotal should be $49.95
         Money expectedTotal = new Money(49.95);
         assert(instance.getSubTotal().checkEquals(expectedTotal));
+        System.out.println("Test 1 of Sale.calcSubTotal passed!");
+        
     }
+    @Test
+    public void test2CalcSubTotal() {
+        System.out.println("Testing Method: Sale.calcSubTotal");
+        int qty = 5;
+        SalesLineItem item = new SalesLineItem(this.testProductDesc,qty);        
+        Sale instance = new Sale();
+        instance.calcSubTotal(item, qty);
+        //Subtotal should be $49.95, this is wrong
+        Money expectedFalseTotal = new Money(49.99);
+        assertFalse(instance.getSubTotal().checkEquals(expectedFalseTotal));
+        System.out.println("Test 2 of Sale.calcSubTotal passed!");
+    }    
 }
