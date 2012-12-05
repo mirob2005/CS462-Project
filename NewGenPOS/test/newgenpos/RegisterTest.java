@@ -53,7 +53,7 @@ public class RegisterTest {
         
         currentSale.setTotal(new Money(1.99));
         boolean expResult = true;
-        boolean result = instance.makeCashPayment(input);
+        boolean result = instance.makeCashPayment(0, input);
         assertEquals(expResult, result);
         System.out.println("Test 1 of Register.makeCashPayment passed!");
     }
@@ -71,7 +71,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCashPayment(input);
+            result = instance.makeCashPayment(0, input);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }
@@ -99,7 +99,7 @@ public class RegisterTest {
         boolean expResult = true;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }
@@ -124,7 +124,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }
@@ -149,7 +149,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -174,7 +174,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -199,7 +199,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -224,7 +224,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -249,7 +249,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -274,7 +274,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCreditPayment(inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
+            result = instance.makeCreditPayment(1, inputAmount, inputCardNumber, inputYear, inputMonth, inputName);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -304,7 +304,7 @@ public class RegisterTest {
         boolean expResult = true;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -331,7 +331,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -358,7 +358,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -385,7 +385,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -412,7 +412,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -439,7 +439,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        
@@ -466,7 +466,7 @@ public class RegisterTest {
         boolean expResult = false;
         boolean result;
         try{
-            result = instance.makeCheckPayment(inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
+            result = instance.makeCheckPayment(2, inputAmount, inputName, inputAddr1, inputAddr2, inputCheckNumber, inputLicense, inputPhone);
         }catch(NullPointerException e){ //Catch gui unavailable error
             result = false;
         }        

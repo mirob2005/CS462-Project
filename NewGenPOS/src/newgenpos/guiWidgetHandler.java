@@ -18,6 +18,9 @@ public class guiWidgetHandler{
     private boolean success;
     private Register register;
     
+    //Cash = 0, Credit = 1, Check = 2
+    private int paymentMethod;
+    
     public void on_cashButton_clicked(Register inRegister) {
         dialog = new QDialog();
         UICashdialog = new Ui_CashDialog();
@@ -29,7 +32,8 @@ public class guiWidgetHandler{
 
         if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
             String input = UICashdialog.getInput();
-            this.success = this.register.makeCashPayment(input);
+            paymentMethod = 0;
+            this.success = this.register.makeCashPayment(paymentMethod, input);
         }
         else {
             Ui_NewGenPOS.setText("Payment Canceled!");
@@ -54,7 +58,8 @@ public class guiWidgetHandler{
             String inputYear = UICreditdialog.getYear();
             String inputMonth = UICreditdialog.getMonth();
             String inputName = UICreditdialog.getName();
-            this.success = this.register.makeCreditPayment(inputAmount, 
+            paymentMethod = 1;
+            this.success = this.register.makeCreditPayment(paymentMethod, inputAmount, 
                     inputCardNumber,inputYear, inputMonth, inputName);
         }
         else {
@@ -82,7 +87,8 @@ public class guiWidgetHandler{
             String inputCheckNumber = UICheckdialog.getCheckNumber();
             String inputLicense = UICheckdialog.getLicense();
             String inputPhone = UICheckdialog.getPhone();
-            this.success = this.register.makeCheckPayment(inputAmount, inputName,
+            paymentMethod = 2;
+            this.success = this.register.makeCheckPayment(paymentMethod, inputAmount, inputName,
                     inputAddr1, inputAddr2, inputCheckNumber, inputLicense,
                     inputPhone);
         }

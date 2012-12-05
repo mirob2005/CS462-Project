@@ -34,6 +34,7 @@ class Register {
     private Ui_ReceiptDialog UIReceiptdialog;
     
     private verifyPaymentAdapter adapter = new verifyPaymentAdapter();
+    //private guiWidgetHandler guiHandler;
     
     
     public Register(int salesNumber, ProductCatalog pc, int id, String addr, String name){
@@ -133,11 +134,13 @@ class Register {
     public void makeNewSale(){
         currentSale = new Sale();
     }
-    public void makePayment(Payment paymentAmount){
-        currentSale.makePayment(paymentAmount);
+    public void makePayment(int paymentMethod){
+        PaymentFactory factoryObj = new PaymentFactory(paymentMethod);
+        Payment payment = factoryObj.getPayment(this.paymentAmount);        
+        currentSale.makePayment(payment);
     }
     //Cash Payment
-    public boolean makeCashPayment(String input){        
+    public boolean makeCashPayment(int paymentMethod, String input){        
         try{
             Double paymentInput = Double.parseDouble(input);
             this.paymentAmount = new Money(paymentInput);                
@@ -155,14 +158,13 @@ class Register {
         //Ensure payment is >= the total
         boolean success = adapter.verifyPayment(this.paymentAmount, this.total);
         if(success){
-            Payment payment = new CashPayment(this.paymentAmount);
-            this.makePayment(payment);
+            this.makePayment(paymentMethod);
         }
         return success;
      
     }
     //Credit Payment
-    public boolean makeCreditPayment(String inputAmount, String inputCardNumber,
+    public boolean makeCreditPayment(int paymentMethod, String inputAmount, String inputCardNumber,
             String inputYear, String inputMonth, String inputName){            
         try{
             Double paymentInput = Double.parseDouble(inputAmount);
@@ -184,8 +186,7 @@ class Register {
                 inputCardNumber, inputMonth, inputYear);
 
         if(success){
-            Payment payment = new CreditPayment(this.paymentAmount);
-            this.makePayment(payment);
+            this.makePayment(paymentMethod);
             this.customerName = inputName;
             this.cardNumber = "XXXXXXXXXXXX"+inputCardNumber.substring(12);
         }            
@@ -193,7 +194,7 @@ class Register {
 
     }
     //Check Payment
-    public boolean makeCheckPayment(String inputAmount, String inputName,
+    public boolean makeCheckPayment(int paymentMethod, String inputAmount, String inputName,
                     String inputAddr1, String inputAddr2, String inputCheckNumber,
                     String inputLicense, String inputPhone){        
         try{
@@ -215,8 +216,7 @@ class Register {
                 inputCheckNumber, inputLicense, inputPhone);
 
         if(success){
-            Payment payment = new CheckPayment(this.paymentAmount);
-            this.makePayment(payment);
+            this.makePayment(paymentMethod);
             this.customerName = inputName;
             this.checkNumber = inputCheckNumber;
         }            
