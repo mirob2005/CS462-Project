@@ -13,14 +13,15 @@ class Sale {
     private Money subTotal;
     private Money total;
     private Money cashBack;
-    private Pricing pricing;
+    private Money discount;
+    private Pricing pricing;    
        
     public Sale(){
         this.isComplete = false;
         this.time = new Date();
         this.subTotal = new Money(0);
         this.total = new Money(0);
-        this.pricing = new Pricing();
+        this.pricing = new Pricing();        
     }
     
     public boolean isComplete(){
@@ -56,9 +57,21 @@ class Sale {
         }       
     }
     public void calcTotal(){
-        Pricing.IPricingStrategy strategy = new Pricing.StandardPricing();        
-        pricing.setPricingStrategy(strategy);
-        this.total = pricing.calcTotal(this.subTotal);
+        this.total = this.pricing.calcTotal(this.subTotal);
+    }
+    public Money getDiscount(){
+        this.discount = this.pricing.calcDiscount(subTotal);
+        return this.discount;
+    }
+    public void setPricingStrategy(boolean discount){
+        IPricingStrategy strategy;
+        if(discount){
+            strategy = new SeniorDiscountPricing();
+        }        
+        else {
+            strategy = new StandardPricing();
+        }
+        this.pricing.setPricingStrategy(strategy);
     }
     public List<SalesLineItem> getCart(){
         return this.cart;
@@ -67,6 +80,7 @@ class Sale {
         return this.time;
     }
     public Money getTotal(){
+        this.calcTotal();
         return this.total;
     }
     public Money getSubTotal(){

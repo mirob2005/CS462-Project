@@ -21,8 +21,7 @@ class Register {
     private Money total;
     private String cardNumber;
     private String checkNumber;
-    private String customerName;
-    private Date time;
+    private String customerName;    
     //Receipt Sections
     List<String> header;
     List<String> itemList;
@@ -88,11 +87,14 @@ class Register {
         }
         
         Money subTotal = currentSale.getSubTotal();
+        Money discount = currentSale.getDiscount();
         this.total = currentSale.getTotal();
         
-        Money tax = this.total.subtract(subTotal);        
+        Money newSubTotal = subTotal.subtract(discount);
+        Money tax = this.total.subtract(newSubTotal);
         
-        this.footer.add("\nSubtotal\t"+subTotal.getFormatted());        
+        this.footer.add("\nSubtotal\t"+subTotal.getFormatted());
+        this.footer.add("\nDiscount\t-"+discount.getFormatted());
         this.footer.add("Tax\t"+tax.getFormatted());
         this.footer.add("Total\t"+this.total.getFormatted());
         
@@ -145,10 +147,11 @@ class Register {
         currentSale.makePayment(payment);
     }
     //Cash Payment
-    public boolean makeCashPayment(int paymentMethod, String input){        
+    public boolean makeCashPayment(int paymentMethod, boolean discount, String input){        
         try{
             Double paymentInput = Double.parseDouble(input);
-            this.paymentAmount = new Money(paymentInput);                
+            this.paymentAmount = new Money(paymentInput);
+            this.currentSale.setPricingStrategy(discount);
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){
@@ -169,11 +172,12 @@ class Register {
      
     }
     //Credit Payment
-    public boolean makeCreditPayment(int paymentMethod, String inputAmount, String inputCardNumber,
+    public boolean makeCreditPayment(int paymentMethod, boolean discount, String inputAmount, String inputCardNumber,
             String inputYear, String inputMonth, String inputName){            
         try{
             Double paymentInput = Double.parseDouble(inputAmount);
-            this.paymentAmount = new Money(paymentInput);                
+            this.paymentAmount = new Money(paymentInput);
+            this.currentSale.setPricingStrategy(discount);
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){
@@ -190,7 +194,7 @@ class Register {
         success = adapter.verifyPayment(this.paymentAmount, this.total, inputName, 
                 inputCardNumber, inputMonth, inputYear);
 
-        if(success){
+        if(success){            
             this.makePayment(paymentMethod);
             this.customerName = inputName;
             this.cardNumber = "XXXXXXXXXXXX"+inputCardNumber.substring(12);
@@ -199,12 +203,13 @@ class Register {
 
     }
     //Check Payment
-    public boolean makeCheckPayment(int paymentMethod, String inputAmount, String inputName,
+    public boolean makeCheckPayment(int paymentMethod, boolean discount, String inputAmount, String inputName,
                     String inputAddr1, String inputAddr2, String inputCheckNumber,
                     String inputLicense, String inputPhone){        
         try{
             Double paymentInput = Double.parseDouble(inputAmount);
-            this.paymentAmount = new Money(paymentInput);                
+            this.paymentAmount = new Money(paymentInput);
+            this.currentSale.setPricingStrategy(discount);
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){
@@ -220,7 +225,7 @@ class Register {
         success = adapter.verifyPayment(this.paymentAmount, this.total, inputName, inputAddr1, inputAddr2,
                 inputCheckNumber, inputLicense, inputPhone);
 
-        if(success){
+        if(success){            
             this.makePayment(paymentMethod);
             this.customerName = inputName;
             this.checkNumber = inputCheckNumber;

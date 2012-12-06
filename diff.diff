@@ -1,99 +1,461 @@
+diff --git a/NewGenPOS/src/newgenpos/Pricing.java b/NewGenPOS/src/newgenpos/Pricing.java
+index df4508b..8bad185 100644
+--- a/NewGenPOS/src/newgenpos/Pricing.java
++++ b/NewGenPOS/src/newgenpos/Pricing.java
+@@ -15,39 +15,7 @@ public class Pricing {
+     public Money calcTotal(Money subTotal){
+         return currentStrat.calcTotal(subTotal);        
+     }
+-
+-    
+-    public interface IPricingStrategy {
+-        Money calcTotal(Money subTotal);
+-    }
+-    
+-    public static class StandardPricing implements IPricingStrategy{
+-        private double tax = 1.08;
+-
+-        public StandardPricing() {
+-        }
+-
+-        @Override
+-        public Money calcTotal(Money subTotal) {
+-            Money total = subTotal.calcTotal(tax);
+-            return total;
+-        }
++    public Money calcSubTotal(Money subTotal){
++        return currentStrat.calcSubTotal(subTotal);
+     }
+-    public static class SeniorDiscountPricing implements IPricingStrategy{
+-        private double tax = 1.08;
+-        private double discount = 0.1;
+-
+-        public SeniorDiscountPricing() {
+-        }
+-
+-        @Override
+-        public Money calcTotal(Money subTotal) {
+-            Money discount = subTotal.calcTotal(this.discount);
+-            Money newSubTotal = subTotal.subtract(discount);
+-            Money total = newSubTotal.calcTotal(this.tax);
+-            return total;
+-        }
+-    }
+-
+-    
+ }
 diff --git a/NewGenPOS/src/newgenpos/Register.java b/NewGenPOS/src/newgenpos/Register.java
-index 93aa6ef..46763e2 100644
+index 8de9434..8de0f04 100644
 --- a/NewGenPOS/src/newgenpos/Register.java
 +++ b/NewGenPOS/src/newgenpos/Register.java
-@@ -10,8 +10,10 @@ import java.util.ArrayList;
- import java.util.Calendar;
- import java.util.Date;
- import java.util.List;
-+import java.util.Observable;
-+import java.util.Observer;
- 
--class Register {
-+class Register implements Observer{
-     private ProductCatalog catalog;
-     private Sale currentSale;
-     private int currentSalesNumber;
-@@ -138,26 +140,9 @@ class Register {
-     public void makePayment(Payment paymentAmount){
-         currentSale.makePayment(paymentAmount);
+@@ -21,8 +21,7 @@ class Register {
+     private Money total;
+     private String cardNumber;
+     private String checkNumber;
+-    private String customerName;
+-    private Date time;
++    private String customerName;    
+     //Receipt Sections
+     List<String> header;
+     List<String> itemList;
+@@ -145,10 +144,11 @@ class Register {
+         currentSale.makePayment(payment);
      }
--    public boolean makeCashPayment(){        
--        dialog = new QDialog();
--        UICashdialog = new Ui_CashDialog();
--        UICashdialog.setupUi(dialog);
--        dialog.setWindowTitle("Enter Cash Amount:");
--        dialog.show();
--
--        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
--            String input = UICashdialog.getInput();
--            boolean success = checkAmount(input);
--            if(success){
--                Payment payment = new CashPayment(this.paymentAmount);
--                this.makePayment(payment);
--            }
--            return success;
--        }
--        else {
--            Ui_NewGenPOS.setText("Payment Canceled!");
--            return false;
--        }        
-+    public void makeCashPayment(){        
-+        Payment payment = new CashPayment(this.paymentAmount);
-+        this.makePayment(payment);
-     }
-     public boolean makeCreditPayment(){
-         dialog = new QDialog();
-@@ -226,7 +211,7 @@ class Register {
-     public ProductCatalog getProductCatalog(){
-         return this.catalog;
-     }
--    private boolean checkAmount(String input){
-+    public boolean checkAmount(String input){
+     //Cash Payment
+-    public boolean makeCashPayment(int paymentMethod, String input){        
++    public boolean makeCashPayment(int paymentMethod, boolean discount, String input){        
          try{
              Double paymentInput = Double.parseDouble(input);
-             this.paymentAmount = new Money(paymentInput);
-@@ -390,4 +375,9 @@ class Register {
-             }            
-         }        
+-            this.paymentAmount = new Money(paymentInput);                
++            this.paymentAmount = new Money(paymentInput);
++            this.currentSale.setPricingStrategy(discount);
+             this.total = currentSale.getTotal();
+         }
+         catch(NumberFormatException e){
+@@ -169,11 +169,12 @@ class Register {
+      
      }
-+
-+    @Override
-+    public void update(Observable o, Object arg) {
-+        throw new UnsupportedOperationException("Not supported yet.");
+     //Credit Payment
+-    public boolean makeCreditPayment(int paymentMethod, String inputAmount, String inputCardNumber,
++    public boolean makeCreditPayment(int paymentMethod, boolean discount, String inputAmount, String inputCardNumber,
+             String inputYear, String inputMonth, String inputName){            
+         try{
+             Double paymentInput = Double.parseDouble(inputAmount);
+-            this.paymentAmount = new Money(paymentInput);                
++            this.paymentAmount = new Money(paymentInput);
++            this.currentSale.setPricingStrategy(discount);
+             this.total = currentSale.getTotal();
+         }
+         catch(NumberFormatException e){
+@@ -190,7 +191,7 @@ class Register {
+         success = adapter.verifyPayment(this.paymentAmount, this.total, inputName, 
+                 inputCardNumber, inputMonth, inputYear);
+ 
+-        if(success){
++        if(success){            
+             this.makePayment(paymentMethod);
+             this.customerName = inputName;
+             this.cardNumber = "XXXXXXXXXXXX"+inputCardNumber.substring(12);
+@@ -199,12 +200,13 @@ class Register {
+ 
+     }
+     //Check Payment
+-    public boolean makeCheckPayment(int paymentMethod, String inputAmount, String inputName,
++    public boolean makeCheckPayment(int paymentMethod, boolean discount, String inputAmount, String inputName,
+                     String inputAddr1, String inputAddr2, String inputCheckNumber,
+                     String inputLicense, String inputPhone){        
+         try{
+             Double paymentInput = Double.parseDouble(inputAmount);
+-            this.paymentAmount = new Money(paymentInput);                
++            this.paymentAmount = new Money(paymentInput);
++            this.currentSale.setPricingStrategy(discount);
+             this.total = currentSale.getTotal();
+         }
+         catch(NumberFormatException e){
+@@ -220,7 +222,7 @@ class Register {
+         success = adapter.verifyPayment(this.paymentAmount, this.total, inputName, inputAddr1, inputAddr2,
+                 inputCheckNumber, inputLicense, inputPhone);
+ 
+-        if(success){
++        if(success){            
+             this.makePayment(paymentMethod);
+             this.customerName = inputName;
+             this.checkNumber = inputCheckNumber;
+diff --git a/NewGenPOS/src/newgenpos/Sale.java b/NewGenPOS/src/newgenpos/Sale.java
+index c23a794..885ef3a 100644
+--- a/NewGenPOS/src/newgenpos/Sale.java
++++ b/NewGenPOS/src/newgenpos/Sale.java
+@@ -13,14 +13,14 @@ class Sale {
+     private Money subTotal;
+     private Money total;
+     private Money cashBack;
+-    private Pricing pricing;
++    private Pricing pricing;    
+        
+     public Sale(){
+         this.isComplete = false;
+         this.time = new Date();
+         this.subTotal = new Money(0);
+         this.total = new Money(0);
+-        this.pricing = new Pricing();
++        this.pricing = new Pricing();        
+     }
+     
+     public boolean isComplete(){
+@@ -56,9 +56,17 @@ class Sale {
+         }       
+     }
+     public void calcTotal(){
+-        Pricing.IPricingStrategy strategy = new Pricing.StandardPricing();        
+-        pricing.setPricingStrategy(strategy);
+-        this.total = pricing.calcTotal(this.subTotal);
++        this.total = this.pricing.calcTotal(this.subTotal);
 +    }
- }
++    public void setPricingStrategy(boolean discount){
++        IPricingStrategy strategy;
++        if(discount){
++            strategy = new SeniorDiscountPricing();
++        }        
++        else {
++            strategy = new StandardPricing();
++        }
++        this.pricing.setPricingStrategy(strategy);
+     }
+     public List<SalesLineItem> getCart(){
+         return this.cart;
 diff --git a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
-index 29b632a..5c1c2c2 100644
+index 70a9aee..1d5a78d 100644
 --- a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
 +++ b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
-@@ -17,6 +17,10 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+@@ -11,8 +11,7 @@ import java.util.List;
+ 
+ 
+ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+-{
+-    private ProductCatalog pc;
++{    
+     private static Register register;
      private QDialog dialog;
      private static Ui_AddItem UIAddItem;
+@@ -36,16 +35,18 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+     private QPushButton cashButton;
+     private QPushButton checkButton;
+     private QLabel label;
++    private QCheckBox seniorDiscountBox;
++    private QLabel seniorDiscountLabel;
      
-+    private Ui_CashDialog UICashdialog;
-+    private Ui_CreditDialog UICreditdialog;
-+    private Ui_CheckDialog UICheckdialog;
-+    
-     private QWidget centralwidget;
-     private QPushButton addItemButton;
-     private QFrame line;
-@@ -250,11 +254,13 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+     private static QStandardItemModel model = new QStandardItemModel(0,4);
+     private String productIDFromAddItem;
+     private String qtyFromAddItem;
++    private boolean discount = false;
+ 
+ 
+     public Ui_NewGenPOS() { 
+         super();
+-        register = Main.getRegister();
+-        pc = register.getProductCatalog();
++        register = Main.getRegister();        
+         register.makeNewSale();
+         widgetHandler = new guiWidgetHandler();
+     }
+@@ -172,7 +173,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         totalLabel.setFont(font9);
+         creditButton = new QPushButton(centralwidget);
+         creditButton.setObjectName("creditButton");
+-        creditButton.setGeometry(new QRect(150, 395, 100, 50));
++        creditButton.setGeometry(new QRect(125, 395, 100, 50));
+         QFont font10 = new QFont();
+         font10.setFamily("Arial");
+         font10.setPointSize(12);
+@@ -181,7 +182,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         creditButton.setFont(font10);
+         cashButton = new QPushButton(centralwidget);
+         cashButton.setObjectName("cashButton");
+-        cashButton.setGeometry(new QRect(280, 395, 100, 50));
++        cashButton.setGeometry(new QRect(255, 395, 100, 50));
+         QFont font11 = new QFont();
+         font11.setFamily("Arial");
+         font11.setPointSize(12);
+@@ -190,13 +191,17 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         cashButton.setFont(font11);
+         checkButton = new QPushButton(centralwidget);
+         checkButton.setObjectName("checkButton");
+-        checkButton.setGeometry(new QRect(410, 395, 100, 50));
+-        QFont font12 = new QFont();
+-        font12.setFamily("Arial");
+-        font12.setPointSize(12);
+-        font12.setBold(true);
+-        font12.setWeight(75);
+-        checkButton.setFont(font12);
++        checkButton.setGeometry(new QRect(385, 395, 100, 50));
++        
++        seniorDiscountBox = new QCheckBox(centralwidget);
++        seniorDiscountBox.setObjectName("seniorDiscount");
++        seniorDiscountBox.setGeometry(new QRect(575,395,50,50));
++        seniorDiscountLabel = new QLabel(centralwidget);
++        seniorDiscountLabel.setObjectName("seniorDiscountLabel");
++        seniorDiscountLabel.setGeometry(new QRect(500,370,175,50));
++        seniorDiscountLabel.setFont(font11);
++        
++        checkButton.setFont(font11);
+         label = new QLabel(centralwidget);
+         label.setObjectName("label");
+         label.setGeometry(new QRect(20, 395, 100, 50));
+@@ -211,7 +216,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         QWidget.setTabOrder(addItemButton, creditButton);
+         QWidget.setTabOrder(creditButton, cashButton);
+         QWidget.setTabOrder(cashButton, checkButton);
+-        QWidget.setTabOrder(checkButton, cartTableView);        
++        QWidget.setTabOrder(checkButton, seniorDiscountBox);
++        QWidget.setTabOrder(seniorDiscountBox, cartTableView);        
+         QWidget.setTabOrder(cartTableView, cartScrollArea);
+         QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
+         QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);        
+@@ -250,16 +256,26 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+         cashButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cash", null));
+         checkButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Check", null));
          label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
++        seniorDiscountLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Senior Discount?", null));
      } // retranslateUi
      
--    private void on_cashButton_clicked()throws SQLException{        
--        boolean success = register.makeCashPayment();
--        if(success){
--            successfulTransaction();
--        }
-+    private void on_cashButton_clicked()throws SQLException{
-+        Observable obs = new guiWidgetHandler();
-+        obs.registerObserver(register);
-+        guiWidgetHandler widgetManager = new guiWidgetHandler();
-+        
-+        widgetManager.cashButtonClicked();
-+        register.update(obs, obs);
+     private void on_cashButton_clicked(){
+-        widgetHandler.on_cashButton_clicked(register);
++        if(seniorDiscountBox.isChecked()){
++            discount = true;            
++        }
++        widgetHandler.on_cashButton_clicked(register,discount);
      }
-     private void on_creditButton_clicked()throws SQLException{  
-         boolean success = register.makeCreditPayment();
+-    private void on_creditButton_clicked()throws SQLException{  
+-        widgetHandler.on_creditButton_clicked(register);
++    private void on_creditButton_clicked()throws SQLException{
++        if(seniorDiscountBox.isChecked()){
++            discount = true;
++        }        
++        widgetHandler.on_creditButton_clicked(register,discount);
+     }
+     private void on_checkButton_clicked()throws SQLException{
+-        widgetHandler.on_checkButton_clicked(register);
++        if(seniorDiscountBox.isChecked()){
++            discount = true;
++        }        
++        widgetHandler.on_checkButton_clicked(register,discount);
+     }
+     public static void clearCart() {
+         model.clear();
+diff --git a/NewGenPOS/src/newgenpos/guiWidgetHandler.java b/NewGenPOS/src/newgenpos/guiWidgetHandler.java
+index e89512a..0425b84 100644
+--- a/NewGenPOS/src/newgenpos/guiWidgetHandler.java
++++ b/NewGenPOS/src/newgenpos/guiWidgetHandler.java
+@@ -21,7 +21,7 @@ public class guiWidgetHandler{
+     //Cash = 0, Credit = 1, Check = 2
+     private int paymentMethod;
+     
+-    public void on_cashButton_clicked(Register inRegister) {
++    public void on_cashButton_clicked(Register inRegister, boolean discount) {
+         dialog = new QDialog();
+         UICashdialog = new Ui_CashDialog();
+         UICashdialog.setupUi(dialog);
+@@ -33,7 +33,7 @@ public class guiWidgetHandler{
+         if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+             String input = UICashdialog.getInput();
+             paymentMethod = 0;
+-            this.success = this.register.makeCashPayment(paymentMethod, input);
++            this.success = this.register.makeCashPayment(paymentMethod, discount, input);
+         }
+         else {
+             Ui_NewGenPOS.setText("Payment Canceled!");
+@@ -43,7 +43,7 @@ public class guiWidgetHandler{
+             successfulTransaction();
+         }
+     }
+-    public void on_creditButton_clicked(Register inRegister) {
++    public void on_creditButton_clicked(Register inRegister, boolean discount) {
+         dialog = new QDialog();
+         UICreditdialog = new Ui_CreditDialog();
+         UICreditdialog.setupUi(dialog);
+@@ -59,7 +59,7 @@ public class guiWidgetHandler{
+             String inputMonth = UICreditdialog.getMonth();
+             String inputName = UICreditdialog.getName();
+             paymentMethod = 1;
+-            this.success = this.register.makeCreditPayment(paymentMethod, inputAmount, 
++            this.success = this.register.makeCreditPayment(paymentMethod, discount, inputAmount, 
+                     inputCardNumber,inputYear, inputMonth, inputName);
+         }
+         else {
+@@ -70,7 +70,7 @@ public class guiWidgetHandler{
+             successfulTransaction();
+         }        
+     }
+-    public void on_checkButton_clicked(Register inRegister) {
++    public void on_checkButton_clicked(Register inRegister, boolean discount) {
+         dialog = new QDialog();
+         UICheckdialog = new Ui_CheckDialog();
+         UICheckdialog.setupUi(dialog);
+@@ -88,7 +88,7 @@ public class guiWidgetHandler{
+             String inputLicense = UICheckdialog.getLicense();
+             String inputPhone = UICheckdialog.getPhone();
+             paymentMethod = 2;
+-            this.success = this.register.makeCheckPayment(paymentMethod, inputAmount, inputName,
++            this.success = this.register.makeCheckPayment(paymentMethod, discount, inputAmount, inputName,
+                     inputAddr1, inputAddr2, inputCheckNumber, inputLicense,
+                     inputPhone);
+         }
+@@ -101,12 +101,8 @@ public class guiWidgetHandler{
+         }
+     }    
+     private void successfulTransaction(){
+-        this.register.createReceipt();
+-        try {                  
+-            this.register.recordSale();
+-        } catch (SQLException ex) {
+-            Logger.getLogger(guiWidgetHandler.class.getName()).log(Level.SEVERE, null, ex);
+-        }
++        this.register.createReceipt();               
++        this.register.recordSale();
+         this.register.endSale();
+         this.register.makeNewSale();
+     }    
+diff --git a/diff.diff b/diff.diff
+index b969a6e..09a450a 100644
+--- a/diff.diff
++++ b/diff.diff
+@@ -1,99 +0,0 @@
+-diff --git a/NewGenPOS/src/newgenpos/Register.java b/NewGenPOS/src/newgenpos/Register.java
+-index 93aa6ef..46763e2 100644
+---- a/NewGenPOS/src/newgenpos/Register.java
+-+++ b/NewGenPOS/src/newgenpos/Register.java
+-@@ -10,8 +10,10 @@ import java.util.ArrayList;
+- import java.util.Calendar;
+- import java.util.Date;
+- import java.util.List;
+-+import java.util.Observable;
+-+import java.util.Observer;
+- 
+--class Register {
+-+class Register implements Observer{
+-     private ProductCatalog catalog;
+-     private Sale currentSale;
+-     private int currentSalesNumber;
+-@@ -138,26 +140,9 @@ class Register {
+-     public void makePayment(Payment paymentAmount){
+-         currentSale.makePayment(paymentAmount);
+-     }
+--    public boolean makeCashPayment(){        
+--        dialog = new QDialog();
+--        UICashdialog = new Ui_CashDialog();
+--        UICashdialog.setupUi(dialog);
+--        dialog.setWindowTitle("Enter Cash Amount:");
+--        dialog.show();
+--
+--        if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
+--            String input = UICashdialog.getInput();
+--            boolean success = checkAmount(input);
+--            if(success){
+--                Payment payment = new CashPayment(this.paymentAmount);
+--                this.makePayment(payment);
+--            }
+--            return success;
+--        }
+--        else {
+--            Ui_NewGenPOS.setText("Payment Canceled!");
+--            return false;
+--        }        
+-+    public void makeCashPayment(){        
+-+        Payment payment = new CashPayment(this.paymentAmount);
+-+        this.makePayment(payment);
+-     }
+-     public boolean makeCreditPayment(){
+-         dialog = new QDialog();
+-@@ -226,7 +211,7 @@ class Register {
+-     public ProductCatalog getProductCatalog(){
+-         return this.catalog;
+-     }
+--    private boolean checkAmount(String input){
+-+    public boolean checkAmount(String input){
+-         try{
+-             Double paymentInput = Double.parseDouble(input);
+-             this.paymentAmount = new Money(paymentInput);
+-@@ -390,4 +375,9 @@ class Register {
+-             }            
+-         }        
+-     }
+-+
+-+    @Override
+-+    public void update(Observable o, Object arg) {
+-+        throw new UnsupportedOperationException("Not supported yet.");
+-+    }
+- }
+-diff --git a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
+-index 29b632a..5c1c2c2 100644
+---- a/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
+-+++ b/NewGenPOS/src/newgenpos/Ui_NewGenPOS.java
+-@@ -17,6 +17,10 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+-     private QDialog dialog;
+-     private static Ui_AddItem UIAddItem;
+-     
+-+    private Ui_CashDialog UICashdialog;
+-+    private Ui_CreditDialog UICreditdialog;
+-+    private Ui_CheckDialog UICheckdialog;
+-+    
+-     private QWidget centralwidget;
+-     private QPushButton addItemButton;
+-     private QFrame line;
+-@@ -250,11 +254,13 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
+-         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
+-     } // retranslateUi
+-     
+--    private void on_cashButton_clicked()throws SQLException{        
+--        boolean success = register.makeCashPayment();
+--        if(success){
+--            successfulTransaction();
+--        }
+-+    private void on_cashButton_clicked()throws SQLException{
+-+        Observable obs = new guiWidgetHandler();
+-+        obs.registerObserver(register);
+-+        guiWidgetHandler widgetManager = new guiWidgetHandler();
+-+        
+-+        widgetManager.cashButtonClicked();
+-+        register.update(obs, obs);
+-     }
+-     private void on_creditButton_clicked()throws SQLException{  
+-         boolean success = register.makeCreditPayment();

@@ -11,8 +11,7 @@ import java.util.List;
 
 
 public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
-{
-    private ProductCatalog pc;
+{    
     private static Register register;
     private QDialog dialog;
     private static Ui_AddItem UIAddItem;
@@ -36,16 +35,18 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QPushButton cashButton;
     private QPushButton checkButton;
     private QLabel label;
+    private QCheckBox seniorDiscountBox;
+    private QLabel seniorDiscountLabel;
     
     private static QStandardItemModel model = new QStandardItemModel(0,4);
     private String productIDFromAddItem;
     private String qtyFromAddItem;
+    private boolean discount = false;
 
 
     public Ui_NewGenPOS() { 
         super();
-        register = Main.getRegister();
-        pc = register.getProductCatalog();
+        register = Main.getRegister();        
         register.makeNewSale();
         widgetHandler = new guiWidgetHandler();
     }
@@ -172,7 +173,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         totalLabel.setFont(font9);
         creditButton = new QPushButton(centralwidget);
         creditButton.setObjectName("creditButton");
-        creditButton.setGeometry(new QRect(150, 395, 100, 50));
+        creditButton.setGeometry(new QRect(125, 395, 100, 50));
         QFont font10 = new QFont();
         font10.setFamily("Arial");
         font10.setPointSize(12);
@@ -181,7 +182,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         creditButton.setFont(font10);
         cashButton = new QPushButton(centralwidget);
         cashButton.setObjectName("cashButton");
-        cashButton.setGeometry(new QRect(280, 395, 100, 50));
+        cashButton.setGeometry(new QRect(255, 395, 100, 50));
         QFont font11 = new QFont();
         font11.setFamily("Arial");
         font11.setPointSize(12);
@@ -190,13 +191,17 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cashButton.setFont(font11);
         checkButton = new QPushButton(centralwidget);
         checkButton.setObjectName("checkButton");
-        checkButton.setGeometry(new QRect(410, 395, 100, 50));
-        QFont font12 = new QFont();
-        font12.setFamily("Arial");
-        font12.setPointSize(12);
-        font12.setBold(true);
-        font12.setWeight(75);
-        checkButton.setFont(font12);
+        checkButton.setGeometry(new QRect(385, 395, 100, 50));
+        
+        seniorDiscountBox = new QCheckBox(centralwidget);
+        seniorDiscountBox.setObjectName("seniorDiscount");
+        seniorDiscountBox.setGeometry(new QRect(575,395,50,50));
+        seniorDiscountLabel = new QLabel(centralwidget);
+        seniorDiscountLabel.setObjectName("seniorDiscountLabel");
+        seniorDiscountLabel.setGeometry(new QRect(500,370,175,50));
+        seniorDiscountLabel.setFont(font11);
+        
+        checkButton.setFont(font11);
         label = new QLabel(centralwidget);
         label.setObjectName("label");
         label.setGeometry(new QRect(20, 395, 100, 50));
@@ -211,7 +216,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         QWidget.setTabOrder(addItemButton, creditButton);
         QWidget.setTabOrder(creditButton, cashButton);
         QWidget.setTabOrder(cashButton, checkButton);
-        QWidget.setTabOrder(checkButton, cartTableView);        
+        QWidget.setTabOrder(checkButton, seniorDiscountBox);
+        QWidget.setTabOrder(seniorDiscountBox, cartTableView);        
         QWidget.setTabOrder(cartTableView, cartScrollArea);
         QWidget.setTabOrder(cartScrollArea, itemDescrScrollArea);
         QWidget.setTabOrder(itemDescrScrollArea, itemDescrTextEdit);        
@@ -221,7 +227,8 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cashButton.clicked.connect(this,"on_cashButton_clicked()");
         creditButton.clicked.connect(this,"on_creditButton_clicked()");
         checkButton.clicked.connect(this,"on_checkButton_clicked()");
-        addItemButton.clicked.connect(this, "on_addItemButton_clicked()");                
+        addItemButton.clicked.connect(this, "on_addItemButton_clicked()");
+        seniorDiscountBox.stateChanged.connect(this,"on_discount_clicked()");
         
         NewGenPOS.connectSlotsByName();
     } // setupUi
@@ -250,16 +257,35 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         cashButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Cash", null));
         checkButton.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Check", null));
         label.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Pay With:", null));
+        seniorDiscountLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("NewGenPOS", "Senior Discount?", null));
     } // retranslateUi
+    private void on_discount_clicked(){
+        if(discount){
+            discount = false;           
+        }
+        else{
+            discount = true;            
+        }
+        
+    }
     
     private void on_cashButton_clicked(){
-        widgetHandler.on_cashButton_clicked(register);
+        if(seniorDiscountBox.isChecked()){
+            discount = true;            
+        }
+        widgetHandler.on_cashButton_clicked(register,discount);
     }
-    private void on_creditButton_clicked()throws SQLException{  
-        widgetHandler.on_creditButton_clicked(register);
+    private void on_creditButton_clicked()throws SQLException{
+        if(seniorDiscountBox.isChecked()){
+            discount = true;
+        }        
+        widgetHandler.on_creditButton_clicked(register,discount);
     }
     private void on_checkButton_clicked()throws SQLException{
-        widgetHandler.on_checkButton_clicked(register);
+        if(seniorDiscountBox.isChecked()){
+            discount = true;
+        }        
+        widgetHandler.on_checkButton_clicked(register,discount);
     }
     public static void clearCart() {
         model.clear();
