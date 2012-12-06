@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+//HW5.1 Strategy Design Pattern
 package newgenpos;
 
 public interface IPricingStrategy {

@@ -50,6 +50,7 @@ public class Ui_NewGenPOSTest {
         
         double total = displayPrice();
         assert(total==11.66); //Total should be 11.66
+        System.out.println("Test 2 of UI_GenPOSTest passed!");
     }
     @Test
     public void testDisplayPriceShouldFail() {
@@ -59,5 +60,6 @@ public class Ui_NewGenPOSTest {
         
         double total = displayPrice();
         assert(!(total==11.75)); //Total should be 17.49
+        System.out.println("Test 2 of UI_GenPOSTest passed!");
     }
 }

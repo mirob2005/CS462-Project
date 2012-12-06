@@ -50,10 +50,11 @@ class Register {
     
     public void endSale(){
         currentSale.becomeComplete();
-        Ui_NewGenPOS.setText("Thank You for Shopping!"); 
-        Ui_NewGenPOS.setDisplay(0);
+        Ui_NewGenPOS.setText("Thank You for Shopping!");         
         Ui_NewGenPOS.clearProductInput();
         Ui_NewGenPOS.clearCart();
+        Ui_NewGenPOS.clearDiscount();
+        Ui_NewGenPOS.setDisplay(0);
         this.currentSalesNumber = this.currentSalesNumber+1;
     }
     public void enterItem(ItemID ItemID, int qty)throws SQLException{
@@ -147,11 +148,10 @@ class Register {
         currentSale.makePayment(payment);
     }
     //Cash Payment
-    public boolean makeCashPayment(int paymentMethod, boolean discount, String input){        
+    public boolean makeCashPayment(int paymentMethod, String input){        
         try{
             Double paymentInput = Double.parseDouble(input);
-            this.paymentAmount = new Money(paymentInput);
-            this.currentSale.setPricingStrategy(discount);
+            this.paymentAmount = new Money(paymentInput);            
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){
@@ -172,12 +172,11 @@ class Register {
      
     }
     //Credit Payment
-    public boolean makeCreditPayment(int paymentMethod, boolean discount, String inputAmount, String inputCardNumber,
+    public boolean makeCreditPayment(int paymentMethod, String inputAmount, String inputCardNumber,
             String inputYear, String inputMonth, String inputName){            
         try{
             Double paymentInput = Double.parseDouble(inputAmount);
             this.paymentAmount = new Money(paymentInput);
-            this.currentSale.setPricingStrategy(discount);
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){
@@ -203,13 +202,12 @@ class Register {
 
     }
     //Check Payment
-    public boolean makeCheckPayment(int paymentMethod, boolean discount, String inputAmount, String inputName,
+    public boolean makeCheckPayment(int paymentMethod, String inputAmount, String inputName,
                     String inputAddr1, String inputAddr2, String inputCheckNumber,
                     String inputLicense, String inputPhone){        
         try{
             Double paymentInput = Double.parseDouble(inputAmount);
-            this.paymentAmount = new Money(paymentInput);
-            this.currentSale.setPricingStrategy(discount);
+            this.paymentAmount = new Money(paymentInput);            
             this.total = currentSale.getTotal();
         }
         catch(NumberFormatException e){

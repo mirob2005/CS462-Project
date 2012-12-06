@@ -21,7 +21,7 @@ public class guiWidgetHandler{
     //Cash = 0, Credit = 1, Check = 2
     private int paymentMethod;
     
-    public void on_cashButton_clicked(Register inRegister, boolean discount) {
+    public void on_cashButton_clicked(Register inRegister) {
         dialog = new QDialog();
         UICashdialog = new Ui_CashDialog();
         UICashdialog.setupUi(dialog);
@@ -33,7 +33,7 @@ public class guiWidgetHandler{
         if (dialog.exec() == QDialog.DialogCode.Accepted.value()) {
             String input = UICashdialog.getInput();
             paymentMethod = 0;
-            this.success = this.register.makeCashPayment(paymentMethod, discount, input);
+            this.success = this.register.makeCashPayment(paymentMethod, input);
         }
         else {
             Ui_NewGenPOS.setText("Payment Canceled!");
@@ -43,7 +43,7 @@ public class guiWidgetHandler{
             successfulTransaction();
         }
     }
-    public void on_creditButton_clicked(Register inRegister, boolean discount) {
+    public void on_creditButton_clicked(Register inRegister) {
         dialog = new QDialog();
         UICreditdialog = new Ui_CreditDialog();
         UICreditdialog.setupUi(dialog);
@@ -59,7 +59,7 @@ public class guiWidgetHandler{
             String inputMonth = UICreditdialog.getMonth();
             String inputName = UICreditdialog.getName();
             paymentMethod = 1;
-            this.success = this.register.makeCreditPayment(paymentMethod, discount, inputAmount, 
+            this.success = this.register.makeCreditPayment(paymentMethod, inputAmount, 
                     inputCardNumber,inputYear, inputMonth, inputName);
         }
         else {
@@ -70,7 +70,7 @@ public class guiWidgetHandler{
             successfulTransaction();
         }        
     }
-    public void on_checkButton_clicked(Register inRegister, boolean discount) {
+    public void on_checkButton_clicked(Register inRegister) {
         dialog = new QDialog();
         UICheckdialog = new Ui_CheckDialog();
         UICheckdialog.setupUi(dialog);
@@ -88,7 +88,7 @@ public class guiWidgetHandler{
             String inputLicense = UICheckdialog.getLicense();
             String inputPhone = UICheckdialog.getPhone();
             paymentMethod = 2;
-            this.success = this.register.makeCheckPayment(paymentMethod, discount, inputAmount, inputName,
+            this.success = this.register.makeCheckPayment(paymentMethod, inputAmount, inputName,
                     inputAddr1, inputAddr2, inputCheckNumber, inputLicense,
                     inputPhone);
         }
@@ -105,5 +105,11 @@ public class guiWidgetHandler{
         this.register.recordSale();
         this.register.endSale();
         this.register.makeNewSale();
-    }    
+    }
+    public void on_discount_clicked(Register inRegister, boolean discount){
+        this.register = inRegister;
+        Sale currentSale = this.register.getCurrentSale();
+        currentSale.setPricingStrategy(discount);
+        currentSale.calcTotal();
+    }
 }

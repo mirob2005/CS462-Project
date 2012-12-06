@@ -35,7 +35,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
     private QPushButton cashButton;
     private QPushButton checkButton;
     private QLabel label;
-    private QCheckBox seniorDiscountBox;
+    private static QCheckBox seniorDiscountBox;
     private QLabel seniorDiscountLabel;
     
     private static QStandardItemModel model = new QStandardItemModel(0,4);
@@ -266,26 +266,18 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         else{
             discount = true;            
         }
-        
+        widgetHandler.on_discount_clicked(register,discount);
     }
     
     private void on_cashButton_clicked(){
-        if(seniorDiscountBox.isChecked()){
-            discount = true;            
-        }
-        widgetHandler.on_cashButton_clicked(register,discount);
+        widgetHandler.on_cashButton_clicked(register);
     }
-    private void on_creditButton_clicked()throws SQLException{
-        if(seniorDiscountBox.isChecked()){
-            discount = true;
-        }        
-        widgetHandler.on_creditButton_clicked(register,discount);
+    private void on_creditButton_clicked()throws SQLException{  
+        widgetHandler.on_creditButton_clicked(register);
     }
     private void on_checkButton_clicked()throws SQLException{
-        if(seniorDiscountBox.isChecked()){
-            discount = true;
-        }        
-        widgetHandler.on_checkButton_clicked(register,discount);
+    
+        widgetHandler.on_checkButton_clicked(register);
     }
     public static void clearCart() {
         model.clear();
@@ -402,6 +394,9 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         {
             setText(""+qty+" "+ description+"'s, product ID "+ itemID.getINT() +" was successfully added to cart at "+price.getFormatted()+" each. There are "+updatedStock+" left");    
         }
+    }
+    public static void clearDiscount(){
+        seniorDiscountBox.setChecked(false);
     }
 }
 

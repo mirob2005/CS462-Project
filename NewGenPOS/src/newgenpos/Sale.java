@@ -58,6 +58,7 @@ class Sale {
     }
     public void calcTotal(){
         this.total = this.pricing.calcTotal(this.subTotal);
+        Ui_NewGenPOS.setDisplay(this.total);
     }
     public Money getDiscount(){
         this.discount = this.pricing.calcDiscount(subTotal);
@@ -80,7 +81,6 @@ class Sale {
         return this.time;
     }
     public Money getTotal(){
-        this.calcTotal();
         return this.total;
     }
     public Money getSubTotal(){
