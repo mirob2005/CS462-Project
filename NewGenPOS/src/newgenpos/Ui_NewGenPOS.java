@@ -90,7 +90,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         font14.setFamily("Arial");
         font14.setPointSize(10);
         
-        if(pc.connectionActive()){
+        if(DBFacade.connectionActive()){
              setText("Inventory Loaded Successfully!");
         }
         else{
@@ -307,7 +307,7 @@ public class Ui_NewGenPOS implements com.trolltech.qt.QUiForm<QMainWindow>
         Ui_AddItem.clearInput();
     }
     private void addItem(){  
-        if(pc.connectionActive())
+        if(DBFacade.connectionActive())
         {
             try{
                 int productID = getProductInput();

@@ -1,15 +1,12 @@
 package newgenpos;
 
 import com.trolltech.qt.gui.QDialog;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class Register {
     private ProductCatalog catalog;
@@ -233,56 +230,50 @@ class Register {
     public ProductCatalog getProductCatalog(){
         return this.catalog;
     }
-    public void recordSale()throws SQLException{
-        Connection con = null;
-        
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
+    public void recordSale(){
+        String paymentMethod = "";
+        String cartList = "";
 
-            Statement st = con.createStatement();
-            String paymentMethod = "";
-            String cartList = "";
-            
-            Payment payment = currentSale.getPayment();
-            if(payment.isCash()){
-                paymentMethod = "CASH";
+        Payment payment = currentSale.getPayment();
+        if(payment.isCash()){
+            paymentMethod = "CASH";
+        }
+        if(payment.isCredit()){
+            paymentMethod = "CREDIT: "+this.customerName+", CARD#"+this.cardNumber;
+        }
+        if(payment.isCheck()){
+            paymentMethod = "CHECK: "+this.customerName+", CHECK#"+this.checkNumber;
+        }
+
+        for(int i =0; i<cart.size();i++){
+            SalesLineItem item = cart.get(i);
+            ProductDescription product = item.getDescription();
+            int qty = item.getQty();
+            String qtyString = "";
+            if(qty<10){
+                qtyString += "0"+qty;
             }
-            if(payment.isCredit()){
-                paymentMethod = "CREDIT: "+this.customerName+", CARD#"+this.cardNumber;
+            else{
+                qtyString += qty;
             }
-            if(payment.isCheck()){
-                paymentMethod = "CHECK: "+this.customerName+", CHECK#"+this.checkNumber;
-            }
-            
-            for(int i =0; i<cart.size();i++){
-                SalesLineItem item = cart.get(i);
-                ProductDescription product = item.getDescription();
-                int qty = item.getQty();
-                String qtyString = "";
-                if(qty<10){
-                    qtyString += "0"+qty;
-                }
-                else{
-                    qtyString += qty;
-                }
-                ItemID currentItemID = product.getItemID();
-                String currentItemString = ""+currentItemID.getINT();
-                cartList+=qtyString+currentItemString+",";
-            }            
-            String totalString = this.total.getFormatted();
-            totalString = totalString.substring(1);
-            double totalAmount = Double.parseDouble(totalString);
-            String insert = "INSERT INTO Sales (salesNumber, date, total, paymentMethod, items) VALUES ("+this.currentSalesNumber+", '"+currentSale.getDate()+ "', "+ totalAmount+", '"+paymentMethod+"', '"+cartList+"')";            
-            st.executeUpdate(insert);   
- 
-        } catch (Exception e) {
-            e.printStackTrace();            
-        } finally {
-            if(con != null) {
-                con.close();
-            }            
-        }        
+            ItemID currentItemID = product.getItemID();
+            String currentItemString = ""+currentItemID.getINT();
+            cartList+=qtyString+currentItemString+",";
+        }            
+        String totalString = this.total.getFormatted();
+        totalString = totalString.substring(1);
+        double totalAmount = Double.parseDouble(totalString);
+        String insert = "INSERT INTO Sales (salesNumber, date, total, paymentMethod, items) VALUES ("
+                +this.currentSalesNumber+", '"+currentSale.getDate()+ "', "+ totalAmount+", '"
+                +paymentMethod+"', '"+cartList+"')";
+
+        DBFacade DBconnection = DBFacade.getDBconnection();
+        try {
+            DBconnection.insertItemsIntoDB(insert);
+    
+        } catch (SQLException ex) {
+            Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     //For Testing ONLY!
     public Sale getCurrentSale(){

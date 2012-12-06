@@ -2,11 +2,8 @@ package newgenpos;
 
 import com.trolltech.qt.core.*;
 import com.trolltech.qt.gui.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -62,11 +59,8 @@ public class Ui_AddItem implements com.trolltech.qt.QUiForm<QDialog>
         
         matrix.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers);                
         
-        try {
-            fillTable();
-        } catch (SQLException ex) {
-            Logger.getLogger(Ui_AddItem.class.getName()).log(Level.SEVERE, null, ex);
-        }               
+        fillTable();
+            
         scrollArea.setWidget(scrollAreaWidgetContents);
    
         QFont font3 = new QFont();
@@ -127,15 +121,11 @@ public class Ui_AddItem implements com.trolltech.qt.QUiForm<QDialog>
         headerLabel.setText(com.trolltech.qt.core.QCoreApplication.translate("AddItem", "All Merchandise", null));
         qtyInput.setText(com.trolltech.qt.core.QCoreApplication.translate("AddItem", "1", null));
     } // retranslateUi
-    private void fillTable()throws SQLException{
-        Connection con = null;
-
+    private void fillTable(){
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost/NewGenPOS", "root", "cs462");
-
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM Inventory");
+            String query = "SELECT * FROM Inventory";
+            DBFacade DBconnection = DBFacade.getDBconnection();
+            ResultSet rs = DBconnection.selectItemsFromDB(query);
 
             while(rs.next()) {
                 List newRow = new ArrayList();
@@ -144,14 +134,10 @@ public class Ui_AddItem implements com.trolltech.qt.QUiForm<QDialog>
                 newRow.add(new QStandardItem(rs.getString("price")));
                 newRow.add(new QStandardItem(rs.getString("stock")));
                 model.appendRow(newRow);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(con != null) {
-                con.close();
-            }
-        }        
+            }     
+        } catch (SQLException ex) {
+            Logger.getLogger(Ui_AddItem.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     public String getProductID(){
         return input.text();
