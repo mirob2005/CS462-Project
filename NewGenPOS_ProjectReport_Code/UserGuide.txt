@@ -1,0 +1,16 @@
+User’s Guide (copied over from Project Report)
+
+The program is written using Java with Qt user interface libraries.  All tests are written using JUnit. To compile the source code, a Java IDE with a Java compiler or ‘javac’ will work.
+
+However, in order to compile the source code, additional libraries are required. These additional libraries are for the Qt user interface.  Information about Qt can be found at http://qt-jambi.org/.  We are using version 4.5.2 which can be found at http://sourceforge.net/projects/qtjambi/files/4.5.2/.  Libraries for win32, win64, mac, linux32, and linux64 can be found at that link.
+
+Once Qt is installed, the POS program will compile and run, but in order for it to perform anything useful, a SQL server must be running on the localhost.  The username for the database must be ‘root’ and the password is ‘cs462’.  The schema must be called ‘NewGenPOS’ and must include tables called ‘Inventory’ and ‘Sales’.  SQL scripts to initialize the schema and necessary tables including sample products for purchase can be found at https://github.com/miro2005/CS462-Project/blob/master/SetUpInventory.sql and https://github.com/miro2005/CS462-Project/blob/master/SetUpSales.sql.  
+
+In order to get Java to connect to the SQL server, an additional library has to be used: ‘mysql-connector-java-5.0.8-bin.jar’, which can be found at http://dev.mysql.com/downloads/connector/j/5.0.html.
+
+All of our tests are created using JUnit and can be found at: https://github.com/miro2005/CS462-Project/tree/master/NewGenPOS/test/newgenpos.  A Java IDE with JUnit support will run through and pass all of these tests.
+
+A folder titled ‘dist’ will be included in the submission which will include the compiled Java code in a .jar file.  Also in this folder will include a lib folder which will include ‘qtjambi-4.5.2_01.jar’ and ‘mysql-connector-java-5.0.8-bin.jar’ which should allow the compiled Java to run successfully assuming the above-mentioned database is running.
+
+To run this compiled Java code, one must use the following command on the command line:
+‘java -jar NewGenPOS.jar’ when inside the dist folder. If the database is not available, error messages stating “Connection Refused” or “Communications link failure.” The GUI will still launch, but the user will be unable to add any items, since no items will be found from the database.
